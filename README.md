@@ -8,6 +8,7 @@ An AI-powered personal finance assistant that delivers personalized financial ad
 
 ## 👥 Team
 | Name | Role |
+
 |Shiva Teja|Leader|
 
 |Rohan Kumar Reddy|Designer|
