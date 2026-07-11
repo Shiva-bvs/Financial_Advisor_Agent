@@ -6,6 +6,15 @@ An AI-powered personal finance assistant that delivers personalized financial ad
 
 ---
 
+## 👥 Team
+| Name | Role |
+|Shiva Teja|Leader|
+|Rohan Kumar Reddy|Designer|
+| — | — |
+| — | — |
+
+---
+
 ## 📖 Overview
 
 This agent combines **OCR-based expense extraction**, **financial data analysis**, and **AI-driven advisory** to give users a single assistant for both understanding their spending and improving their financial decisions.
@@ -157,14 +166,7 @@ financial-advisor-agent/
 - [ ] Streamlit dashboard
 - [ ] Deployment to Streamlit Cloud
 
----
 
-## 👥 Team
-| Name | Role |
-|---|---|
-| — | — |
-| — | — |
-| — | — |
 
 ---
 
