@@ -17,7 +17,7 @@ An AI-powered personal finance assistant that delivers personalized financial ad
 
 ## 📖 Overview
 
-This agent combines **OCR-based expense extraction**, **financial data analysis**, and **AI-driven advisory** to give users a single assistant for both understanding their spending and improving t[...]
+This agent combines **OCR-based expense extraction**, **financial data analysis**, and **AI-driven advisory** to give users a single assistant for both understanding their spending and improving their financial health.
 
 Users can:
 - Upload payment screenshots, receipts, and bank statements for automatic expense extraction
