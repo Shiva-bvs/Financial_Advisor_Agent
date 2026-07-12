@@ -158,6 +158,14 @@ financial-advisor-agent/
 
 ---
 
+## 📅 Progress & Weekly Outputs
+
+### Week 1 Output
+- **Project Initialization & Homepage Design**
+- See: [Week 1 Output PDF](./docs/week-1-output.pdf)
+
+---
+
 ## 🗺️ Roadmap
 - [ ] OCR pipeline for screenshots/receipts
 - [ ] Splitwise integration
@@ -166,7 +174,4 @@ financial-advisor-agent/
 - [ ] Streamlit dashboard
 - [ ] Deployment to Streamlit Cloud
 
-
-
 ---
-
