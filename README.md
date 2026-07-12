@@ -1,6 +1,6 @@
 # 💰 Financial Advisor & Expense Manager AI Agent
 
-An AI-powered personal finance assistant that delivers personalized financial advice grounded in the philosophies of leading financial gurus, while automating expense tracking from payment screenshots[...]
+An AI-powered personal finance assistant that delivers personalized financial advice grounded in the philosophies of leading financial gurus, while automating expense tracking from payment screenshots.
 
 > Built as part of an 8-week AI agent development project focused on FinTech & personal wealth management.
 
@@ -31,7 +31,7 @@ Users can:
 
 This repo supports two development tracks — choose based on team scope and timeline.
 
-
+### Track A: Core Foundation
 - **Focus:** Core financial advice + expense tracking with strong fundamentals
 - **Domain:** Personal Finance Assistant **or** Expense Tracking Agent
 - **APIs:** 2–3 integrations (OCR + Financial Advice + Basic Expense Analysis)
@@ -39,8 +39,6 @@ This repo supports two development tracks — choose based on team scope and tim
 - **UI:** Streamlit financial dashboard
 - **Deployment:** Streamlit Cloud (single platform)
 - **Features:** Screenshot expense extraction, basic financial advice, spending categorization, simple budgeting
-
-
 
 ---
 
@@ -110,7 +108,7 @@ By completing this project, contributors will gain experience in:
 
 ### Installation
 ```bash
-git clone https://github.com/<your-org>/financial-advisor-agent.git
+git clone https://github.com/Shiva-bvs/Financial_Advisor_Agent.git
 cd financial-advisor-agent
 python -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
@@ -143,6 +141,7 @@ financial-advisor-agent/
 │   ├── integrations/       # Splitwise, bank, UPI connectors
 │   └── document_processing/# PDF/CSV/DOCX handling
 ├── data/                   # Sample statements, screenshots (gitignored)
+├── docs/                   # Documentation and outputs
 ├── requirements.txt
 ├── .env.example
 └── README.md
@@ -162,7 +161,8 @@ financial-advisor-agent/
 
 ### Week 1 Output
 - **Project Initialization & Homepage Design**
-- See: [Week 1 Output PDF](https://github.com/Shiva-bvs/Financial_Advisor_Agent/raw/main/docs/week-1-output.pdf)
+- Status: ✅ Complete
+- See documentation in `/docs` folder or check project repository for design files
 
 ---
 
@@ -175,3 +175,13 @@ financial-advisor-agent/
 - [ ] Deployment to Streamlit Cloud
 
 ---
+
+## 📝 Contributing
+
+Contributions are welcome! Please ensure your code follows the project structure and includes appropriate documentation.
+
+---
+
+## 📄 License
+
+This project is part of an educational AI agent development initiative.
