@@ -17,7 +17,7 @@ An AI-powered personal finance assistant that delivers personalized financial ad
 
 ## 📖 Overview
 
-This agent combines **OCR-based expense extraction**, **financial data analysis**, and **AI-driven advisory** to give users a single assistant for both understanding their spending and improving their financial health.
+This agent combines **OCR-based expense extraction**, **financial data analysis**, and **AI-driven advisory** to give users a single assistant for both understanding their spending and improving their financial decisions.
 
 Users can:
 - Upload payment screenshots, receipts, and bank statements for automatic expense extraction
@@ -162,7 +162,24 @@ financial-advisor-agent/
 ### Week 1 Output
 - **Project Initialization & Homepage Design**
 - Status: ✅ Complete
-- See documentation in `/docs` folder or check project repository for design files
+
+#### Deliverables:
+1. **Homepage UI/UX Design Document**
+   - Comprehensive interactive dashboard mockup
+   - Modern financial application interface
+   - Key sections: Expense Overview, Financial Advice Portal, Budget Analyzer
+   - User onboarding flow visualization
+   - Responsive design for desktop and tablet views
+
+2. **Design Specifications:**
+   - Color scheme optimized for financial data visualization
+   - Typography hierarchy for clear information hierarchy
+   - Interactive components and user interaction flows
+   - Navigation structure for seamless user experience
+
+📄 **View Week 1 Deliverables:** [`docs/Homepage_AI_Financial_Advisor.pdf`](docs/Homepage_AI_Financial_Advisor.pdf)
+
+All design documentation and project assets are available in the `/docs` folder.
 
 ---
 
