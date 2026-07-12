@@ -1,6 +1,6 @@
 # 💰 Financial Advisor & Expense Manager AI Agent
 
-An AI-powered personal finance assistant that delivers personalized financial advice grounded in the philosophies of leading financial gurus, while automating expense tracking from payment screenshots.
+An AI-powered personal finance assistant that delivers personalized financial advice grounded in the philosophies of leading financial gurus, while automating expense tracking from payment screenshots[...]
 
 > Built as part of an 8-week AI agent development project focused on FinTech & personal wealth management.
 
@@ -17,7 +17,7 @@ An AI-powered personal finance assistant that delivers personalized financial ad
 
 ## 📖 Overview
 
-This agent combines **OCR-based expense extraction**, **financial data analysis**, and **AI-driven advisory** to give users a single assistant for both understanding their spending and improving their financial health.
+This agent combines **OCR-based expense extraction**, **financial data analysis**, and **AI-driven advisory** to give users a single assistant for both understanding their spending and improving t[...]
 
 Users can:
 - Upload payment screenshots, receipts, and bank statements for automatic expense extraction
@@ -162,7 +162,7 @@ financial-advisor-agent/
 
 ### Week 1 Output
 - **Project Initialization & Homepage Design**
-- See: [Week 1 Output PDF](./docs/week-1-output.pdf)
+- See: [Week 1 Output PDF](https://github.com/Shiva-bvs/Financial_Advisor_Agent/raw/main/docs/week-1-output.pdf)
 
 ---
 
