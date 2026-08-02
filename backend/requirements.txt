@@ -27,3 +27,6 @@ pydantic-settings==2.14.2
 python-dotenv==1.2.2
 SQLAlchemy==2.0.51
 numpy==2.5.0
+fastapi
+uvicorn
+python-multipart

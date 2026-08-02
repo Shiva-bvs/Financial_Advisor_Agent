@@ -1,57 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Homepage | AI Financial Advisor</title>
+    <meta name="description"
+        content="Meet your new AI financial advisor. Automate savings, optimize investments, and get personalized 24/7 financial advice.">
     <link rel="stylesheet" href="styles.css">
+    <!-- Using FontAwesome for simple icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <!-- Header -->
-    <header class="site-header">
-        <div class="logo-placeholder">[ LOGO ]</div>
-        <nav class="nav-placeholder">
-            <span>Features</span>
-            <span>How it Works</span>
-            <span>Pricing</span>
-            <span>About Us</span>
+    <header class="site-header glass-panel">
+        <a href="#" class="logo">
+            <img src="images/logo.png" alt="AI Financial Advisor Logo">
+        </a>
+        <nav class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How it Works</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#about-us">About Us</a>
         </nav>
-        <div class="cta-placeholder">Login / Sign Up</div>
+        <a href="#" class="btn-primary">Login / Sign Up</a>
     </header>
 
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
-            <h1>Meet Your New AI Financial Advisor</h1>
-            <p>Automate your savings, optimize your investments, and get personalized financial advice 24/7 with our intelligent AI agent.</p>
+            <h1>Meet Your New AI<br>Financial Advisor</h1>
+            <p>Automate your savings, optimize your investments, and get personalized financial advice 24/7 with our
+                intelligent AI agent.</p>
             <div class="hero-buttons">
-                <div class="btn-primary-placeholder">Start for Free</div>
-                <div class="btn-secondary-placeholder">Watch Demo</div>
+                <a href="#" class="btn-primary">Start for Free</a>
+                <a href="#" class="btn-secondary">Watch Demo</a>
             </div>
         </div>
-        <div class="hero-image-placeholder">
-            <div class="placeholder-x"></div>
-            <span>[ Dashboard Interface Mockup / Hero Image ]</span>
+        <div class="hero-image">
+            <img src="images/hero.png" alt="AI Dashboard Interface">
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features-section">
+    <section id="features" class="features-section">
         <h2>Core Capabilities</h2>
         <div class="features-grid">
-            <div class="feature-card">
-                <div class="icon-placeholder">Icon</div>
+            <div class="feature-card glass-panel">
+                <i class="fa-solid fa-robot feature-icon"></i>
                 <h3>24/7 AI Chat</h3>
-                <p>Text description of the AI conversational agent providing instant advice and answering financial questions.</p>
+                <p>Text description of the AI conversational agent providing instant advice and answering financial
+                    questions.</p>
             </div>
-            <div class="feature-card">
-                <div class="icon-placeholder">Icon</div>
+            <div class="feature-card glass-panel">
+                <i class="fa-solid fa-chart-line feature-icon"></i>
                 <h3>Automated Investing</h3>
                 <p>Text description of how the AI automatically moves money into high-yield accounts or index funds.</p>
             </div>
-            <div class="feature-card">
-                <div class="icon-placeholder">Icon</div>
+            <div class="feature-card glass-panel">
+                <i class="fa-solid fa-bullseye feature-icon"></i>
                 <h3>Goal Tracking</h3>
                 <p>Text description of visual trackers for retirement, vacations, and emergency funds.</p>
             </div>
@@ -59,20 +68,20 @@
     </section>
 
     <!-- How It Works Section -->
-    <section class="how-it-works-section">
+    <section id="how-it-works" class="how-it-works-section">
         <h2>How It Works</h2>
         <div class="steps-container">
-            <div class="step-card">
+            <div class="step-card glass-panel">
                 <div class="step-number">1</div>
                 <h3>Connect Accounts</h3>
                 <p>Securely link your bank and brokerage accounts.</p>
             </div>
-            <div class="step-card">
+            <div class="step-card glass-panel">
                 <div class="step-number">2</div>
                 <h3>AI Analysis</h3>
                 <p>Our agent analyzes your spending and income patterns.</p>
             </div>
-            <div class="step-card">
+            <div class="step-card glass-panel">
                 <div class="step-number">3</div>
                 <h3>Grow Wealth</h3>
                 <p>Approve AI-suggested transfers and watch your money grow.</p>
@@ -81,35 +90,37 @@
     </section>
 
     <!-- Call to Action Section -->
-    <section class="cta-section">
+    <section class="cta-section glass-panel">
         <h2>Ready to take control of your finances?</h2>
         <p>Join thousands of users who are automating their wealth building.</p>
-        <div class="btn-primary-placeholder large">Create Your Account</div>
+        <a href="#" class="btn-primary" style="padding: 16px 32px; font-size: 1.2rem;">Create Your Account</a>
     </section>
 
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-columns">
             <div class="footer-col">
-                <div class="logo-placeholder small">[ LOGO ]</div>
-                <p>Your personal AI wealth manager.</p>
+                <a href="#" class="footer-logo">
+                    <img src="images/logo.png" alt="AI Financial Advisor Logo">
+                </a>
+                <p style="color: var(--text-secondary); margin-top: 15px;">Your personal AI wealth manager.</p>
             </div>
             <div class="footer-col">
                 <h4>Product</h4>
-                <span>Features</span>
-                <span>Security</span>
-                <span>Pricing</span>
+                <a href="#">Features</a>
+                <a href="#">Security</a>
+                <a href="#">Pricing</a>
             </div>
             <div class="footer-col">
                 <h4>Company</h4>
-                <span>About</span>
-                <span>Blog</span>
-                <span>Contact</span>
+                <a href="#">About</a>
+                <a href="#">Blog</a>
+                <a href="#">Contact</a>
             </div>
             <div class="footer-col">
                 <h4>Legal</h4>
-                <span>Terms of Service</span>
-                <span>Privacy Policy</span>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -118,4 +129,5 @@
     </footer>
 
 </body>
+
 </html>
