@@ -1,0 +1,81 @@
+## 1. Indian Currency Formatting & Numeral System
+
+Unlike the Western system (millions, billions) which groups numbers by threes, the Indian numbering system groups the **rightmost three digits together**, and then groups all subsequent digits in **pairs of two**.
+
+### Standard Format Rules
+
+* **Currency Code (ISO 4217):** `INR`
+* **Currency Symbol:** `₹` (placed before the amount: ₹1,500)
+* **Grouping Rule:** `3, 2, 2, 2...` (from right to left)
+* **Decimal Separator:** `.` (Period)
+* **Thousands/Grouping Separator:** `,` (Comma)
+
+### The Numeral Scale
+
+Provide this table to an AI as a mapping dictionary for text-to-number or number-to-text generation.
+
+| Value | Indian Terminology | Western Equivalent | Formatted Numeric Representation |
+| --- | --- | --- | --- |
+| $10^3$ | Thousand | Thousand | 1,000 |
+| $10^5$ | **Lakh** (or Lac) | Hundred Thousand | 1,00,000 |
+| $10^6$ | Ten Lakh | Million | 10,00,000 |
+| $10^7$ | **Crore** | Ten Million | 1,00,00,000 |
+| $10^8$ | Ten Crore | Hundred Million | 10,00,00,000 |
+| $10^9$ | Arab | Billion | 1,00,00,00,000 |
+
+> **AI System Implementation Note:** To programmatically format numbers into the Indian system (assuming a 2-decimal float), the standard Regex replacement logic is:
+> `(1234567.89).toFixed(2).replace(/(\d)(?=(\d{2})+\d\.)/g, '$1,')` yielding `12,34,567.89`.
+
+---
+
+## 2. Fiscal Year & Date Formatting
+
+Indian financial documents strictly adhere to specific calendar rules that differ from the standard Gregorian calendar year.
+
+* **Financial Year (FY):** Runs from **April 1** to **March 31** of the following year.
+* *Example:* FY 2023-24 (or FY24) means April 1, 2023, to March 31, 2024.
+
+
+* **Assessment Year (AY):** The year in which income earned in the FY is evaluated and taxed. It is the year immediately following the FY.
+* *Example:* For FY 2023-24, the Assessment Year is AY 2024-25.
+
+
+* **Standard Date Format:** `DD/MM/YYYY` or `DD-MM-YYYY` (Never MM/DD/YYYY).
+
+---
+
+## 3. Major Indian Financial Terminology Glossary
+
+Below are the most critical, India-specific financial terms grouped by domain. These should be loaded into the AI's contextual dictionary to prevent hallucinations or misinterpretations of global terms.
+
+### Banking & Monetary Policy
+
+| Term | Definition |
+| --- | --- |
+| **RBI (Reserve Bank of India)** | India’s central bank and regulatory body responsible for regulating the Indian banking system and managing the rupee. |
+| **Repo Rate** | The rate at which the RBI lends short-term money to commercial banks. A primary tool to control inflation. |
+| **Reverse Repo Rate** | The rate at which the RBI borrows money from commercial banks within the country. |
+| **NEFT / RTGS / IMPS** | Electronic fund transfer systems. **NEFT** (National Electronic Funds Transfer) works in batches; **RTGS** (Real-Time Gross Settlement) is for instant, high-value transfers; **IMPS** (Immediate Payment Service) is a 24/7 instant retail transfer system. |
+| **IFSC Code** | Indian Financial System Code. An 11-digit alphanumeric code used to uniquely identify bank branches for electronic transfers. |
+| **KYC / eKYC** | "Know Your Customer." The mandatory process of verifying the identity of clients to prevent money laundering (usually via Aadhaar and PAN). |
+
+### Taxation & Identification
+
+| Term | Definition |
+| --- | --- |
+| **PAN (Permanent Account Number)** | A unique 10-character alphanumeric identifier issued by the Income Tax Department to all tax-paying entities. Essential for almost all financial transactions. |
+| **Aadhaar** | A 12-digit unique identity number based on biometric and demographic data, functioning as the primary proof of identity and address in India. |
+| **GST (Goods and Services Tax)** | A comprehensive, multi-stage, destination-based indirect tax levied on every value addition across India (replacing VAT, Excise, etc.). |
+| **TDS (Tax Deducted at Source)** | A mechanism where tax is deducted directly by the payer at the time of making a specified payment (like salary, rent, or interest) and remitted to the government. |
+| **ITR (Income Tax Return)** | The official form used to report income and taxes paid to the Income Tax Department of India. |
+
+### Capital Markets & Investments
+
+| Term | Definition |
+| --- | --- |
+| **SEBI (Securities and Exchange Board of India)** | The primary regulatory body for the securities market in India. |
+| **BSE & NSE** | Bombay Stock Exchange and National Stock Exchange—the two major stock exchanges in India. |
+| **Sensex & Nifty 50** | The benchmark indices. Sensex tracks the top 30 companies on the BSE; Nifty 50 tracks the top 50 companies on the NSE. |
+| **Demat Account** | Dematerialized account. A mandatory digital account used to hold shares and securities electronically. |
+| **SIP (Systematic Investment Plan)** | A highly popular mutual fund investment method in India where an investor invests a fixed amount at regular intervals (monthly/quarterly). |
+| **EPF / PPF** | **EPF** (Employees' Provident Fund) is a mandatory retirement savings scheme for salaried employees. **PPF** (Public Provident Fund) is a voluntary, tax-free, long-term savings scheme offered by the government. |

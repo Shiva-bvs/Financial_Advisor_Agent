@@ -1,0 +1,40 @@
+# Indian Tax Laws & Rules (FY 2025-26)
+
+Indian tax laws have undergone a massive paradigm shift recently. For FY 2025–26 (Assessment Year 2026–27), the New Tax Regime is the default and has been made aggressively attractive. In fact, due to enhanced rebates, a salaried individual can now earn up to ₹12.75 lakh entirely tax-free under the new system. However, the Old Tax Regime still exists and remains the better choice if you have substantial ongoing investments, a home loan, or pay high rent.
+
+If you opt for the Old Tax Regime, your goal is to aggressively lower your taxable income using the government's approved deduction sections. Here is the deepest breakdown of how to maximize them.
+
+## 1. Section 80C: The ₹1.5 Lakh Powerhouse
+This is the most popular section. You can claim up to ₹1,50,000 per financial year by investing in specific instruments or paying certain expenses.
+
+| Instrument | Asset Class | Lock-in | Best For |
+| :--- | :--- | :--- | :--- |
+| EPF (Employee Provident Fund) | Debt | Until Retirement | Passive saving (deducted directly from salary). |
+| PPF (Public Provident Fund) | Debt | 15 Years | Ultra-safe, guaranteed, tax-free maturity. |
+| ELSS (Equity Linked Savings Scheme) | Equity | 3 Years | Aggressive market growth with the shortest lock-in. |
+| Life Insurance Premiums | N/A | N/A | Term life insurance policies. |
+| Home Loan Principal | N/A | N/A | Claiming the principal repayment of your EMI. |
+
+**Pro-Tip:** Do not blindly buy insurance policies just to fill your 80C bucket. If your EPF contributions and term insurance premiums already add up to ₹1.5 lakh, you do not need to lock your money into a PPF or ELSS just for tax purposes.
+
+## 2. Section 80CCD(1B): The NPS "Kicker"
+If you have exhausted your ₹1.5 lakh limit under 80C, you can invest an additional ₹50,000 into the National Pension System (NPS) Tier-1 account. This effectively pushes your basic investment deduction limit to ₹2 Lakhs. NPS is a market-linked retirement fund locked until you turn 60.
+
+## 3. Section 80D: Health Insurance Premiums
+You can claim deductions for medical insurance premiums paid for yourself and your family.
+- **For Yourself, Spouse, and Children:** Up to ₹25,000.
+- **For Parents (Senior Citizens):** An additional ₹50,000.
+- **Note:** You can also claim up to ₹5,000 for preventive health check-ups within these limits.
+
+## 4. Section 24(b) & HRA: The Housing Deductions
+Housing is usually the largest expense, and the tax code offers heavy relief here.
+- **Home Loan Interest (Section 24b):** If you are paying an EMI on a home loan, you can deduct up to ₹2 Lakhs of the interest component from your taxable income. (The principal is claimed under 80C).
+- **House Rent Allowance (HRA):** If you live in a rented house and receive HRA as part of your salary, you can claim a deduction based on a formula involving your basic salary, rent paid, and city of residence. (Note: You cannot claim HRA if you claim Section 24b for a house in the same city).
+
+## Tax Savings Under the New Tax Regime
+If you file under the New Tax Regime, you cannot claim 80C, 80D, HRA, or Home Loan interest. However, the government has provided specific, powerful built-in benefits to compensate:
+- **Standard Deduction:** Salaried employees automatically get a ₹75,000 deduction straight off their gross income.
+- **Section 87A Rebate:** If your taxable income (after the standard deduction) is ₹12 Lakh or less, you get a tax rebate of up to ₹60,000, wiping your tax liability to zero.
+- **Corporate NPS (Section 80CCD(2)):** This is the only major investment deduction allowed in the new regime. If your employer contributes to your NPS account (up to 14% of your Basic Salary), that entire amount is deducted from your taxable income.
+
+**Recommendation:** To give a precise, actionable recommendation on which regime to choose and where to allocate money, you must ask the user for context about their income, current investments, rent, and home loans.

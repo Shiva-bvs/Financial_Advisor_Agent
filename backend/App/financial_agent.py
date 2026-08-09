@@ -319,17 +319,70 @@ def initialize_agent():
     else:
         raise ValueError("No LLM API key provided. Set GROQ_API_KEY or GEMINI_API_KEY.")
 
+    # Load universal knowledge from Assets
+    # Load universal knowledge from Assets
+    inv_knowledge_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'universal_knowledge.txt')
+    universal_knowledge = ""
+    if os.path.exists(inv_knowledge_path):
+        with open(inv_knowledge_path, "r", encoding="utf-8") as f:
+            universal_knowledge = f.read()
+
+    # Load spending patterns knowledge
+    spend_knowledge_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'spending_patterns.txt')
+    spending_patterns = ""
+    if os.path.exists(spend_knowledge_path):
+        with open(spend_knowledge_path, "r", encoding="utf-8") as f:
+            spending_patterns = f.read()
+            
+    # Load tax laws knowledge
+    tax_knowledge_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'tax_laws.txt')
+    tax_laws = ""
+    if os.path.exists(tax_knowledge_path):
+        with open(tax_knowledge_path, "r", encoding="utf-8") as f:
+            tax_laws = f.read()
+
+    # Load indian currency protocol knowledge
+    indian_currency_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'indian_currency_protocol.txt')
+    indian_currency_protocol = ""
+    if os.path.exists(indian_currency_path):
+        with open(indian_currency_path, "r", encoding="utf-8") as f:
+            indian_currency_protocol = f.read()
+
     sys_msg = (
         "You are an intelligent AI Financial Advisor. Help the user analyze market data, summarize financial reports, "
         "explain basic investment concepts, analyze spending patterns, and provide personalized budgeting advice. "
-        "Always remind them that you are an AI and this is not professional financial advice."
+        "Always remind them that you are an AI and this is not professional financial advice.\n"
+        "When asked for a comprehensive financial report or to analyze a client's financial situation, ALWAYS use the `analyze_all_client_assets` tool to read all files in the Assets folder, and base your report on that data.\n\n"
+        "INDIAN FINANCIAL SYSTEM & CURRENCY PROTOCOL:\n"
+        f"{indian_currency_protocol}\n\n"
+        "SPENDING ANALYSIS INSTRUCTIONS:\n"
+        "When a user provides their spending details or asks for spending analysis, you MUST:\n"
+        "1. Analyze their spending pattern and compare it against the national averages provided in the NATIONAL SPENDING PATTERNS data.\n"
+        "2. Generate a custom financial and budgeting plan for them based on this comparison.\n"
+        "3. Suggest appropriate investment options from the INVESTMENT RECOMMENDATIONS KNOWLEDGE BASE as the final step of the plan.\n\n"
+        "TAX PLANNING INSTRUCTIONS:\n"
+        "When a user asks about taxes, tax savings, or when you are generating a comprehensive financial plan:\n"
+        "1. Use the TAX SAVING LAWS & RULES below to determine if they should opt for the Old or New Tax Regime.\n"
+        "2. Recommend specific deductions (80C, 80D, NPS) based on their profile.\n"
+        "3. If you lack information (like their salary, rent, or home loan status), explicitly ask them for it before giving a final recommendation on the tax regime.\n\n"
+        "TAX SAVING LAWS & RULES:\n"
+        f"{tax_laws}\n\n"
+        "NATIONAL SPENDING PATTERNS (HCES 2023-24):\n"
+        f"{spending_patterns}\n\n"
+        "INVESTMENT RECOMMENDATIONS KNOWLEDGE BASE:\n"
+        "When the user is trying to improve their savings, searching for investment options, or after analyzing their spending, proactively offer the following as a suggestion:\n"
+        f"{universal_knowledge}"
     )
+    
     try:
         # Latest versions
-        agent = create_react_agent(llm, tools=tools)
+        agent = create_react_agent(llm, tools=tools, state_modifier=sys_msg)
     except Exception:
-        # Fallback for older versions if needed
-        agent = create_react_agent(llm, tools=tools)
+        try:
+            # Fallback for older versions if needed
+            agent = create_react_agent(llm, tools=tools, messages_modifier=sys_msg)
+        except Exception:
+            agent = create_react_agent(llm, tools=tools)
     return agent
 
 if __name__ == "__main__":
@@ -355,13 +408,7 @@ if __name__ == "__main__":
                 print("\033[93mGoodbye! Have a great day.\033[0m")
                 break
                 
-            sys_msg_text = (
-                "You are an intelligent AI Financial Advisor. Help the user analyze market data, summarize financial reports, "
-                "explain basic investment concepts, analyze spending patterns, and provide personalized budgeting advice. "
-                "Always remind them that you are an AI and this is not professional financial advice. "
-                "When asked for a comprehensive financial report or to analyze a client's financial situation, ALWAYS use the `analyze_all_client_assets` tool to read all files in the Assets folder, and base your report on that data."
-            )
-            inputs = {"messages": [("system", sys_msg_text), ("user", user_input)]}
+            inputs = {"messages": [("user", user_input)]}
             print("\033[90mThinking...\033[0m")
             
             for s in agent.stream(inputs, stream_mode="values"):

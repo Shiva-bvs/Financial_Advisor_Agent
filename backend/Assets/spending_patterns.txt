@@ -1,0 +1,45 @@
+The most recent data from the **Household Consumption Expenditure Survey (HCES) 2023–24** highlights a major shift in how Indians spend their money. Rising incomes and evolving lifestyle priorities have fundamentally altered the traditional household budget.
+
+## Rural vs. Urban Spending (2023-24)
+
+Here is a breakdown of the Average Monthly Per Capita Expenditure (MPCE) in India.
+
+| Metric | Rural India | Urban India |
+| --- | --- | --- |
+| **Average MPCE** | ₹4,122 | ₹6,996 |
+| **MPCE (Including Free Govt Benefits)** | ₹4,247 | ₹7,078 |
+| **Share Spent on Food** | 47% | 40% |
+| **Share Spent on Non-Food** | 53% | 60% |
+
+> **Key Insight:** The urban-rural spending gap is shrinking. In 2011-12, urban MPCE was 84% higher than rural; today, that gap has narrowed to 70%, driven by strong consumption growth in villages.
+
+---
+
+## The Big Shift: Non-Food Taking Over
+
+Historically, food consumed the vast majority of an Indian household's income (up to 80% in the 1960s). However, the 2023–24 data shows that non-food expenses now securely dominate the budget in both rural and urban areas.
+
+* **Conveyance & Transport:** Spending on personal vehicles, fuel, bus fares, and flights has surged, accounting for roughly 8% of all monthly spending.
+* **Medical & Healthcare:** Health-related expenses make up about 7% of rural and 6% of urban spending. Combined with education, these two categories take up over 10% of the average budget.
+* **Durable Goods:** Spending on items like appliances, furniture, and electronics has more than doubled over the last two decades, now sitting at around 7% of total expenses.
+* **Housing & Rent:** Rent remains a uniquely urban expense, taking up about 7% of the average urban MPCE.
+
+---
+
+## Changing Palates: The New Food Basket
+
+Even within the food budget, what Indians buy has changed dramatically.
+
+* **Decline in Cereals:** In the year 2000, staples like rice and wheat made up 22% of the rural budget and 12% of the urban budget. Today, partly due to the National Food Security Act providing free grains, cereals account for less than 5% of household spending.
+* **Rise of Processed Foods:** The largest chunk of the food budget is no longer raw staples. Beverages, refreshments, packaged snacks, and purchased cooked meals now dominate food expenditure across the country. Currently, more than 10% of the average Indian MPCE goes strictly toward processed food.
+
+---
+
+## Inequality is Decreasing
+
+The latest surveys point to a more equitable distribution of consumption. The Gini coefficient—a standard statistical measure of inequality—has noticeably declined.
+
+* **Rural Gini:** Fell from 0.283 in 2011–12 to 0.237 in 2023–24.
+* **Urban Gini:** Dropped from 0.363 to 0.284 in the same timeframe.
+
+This narrowing inequality is largely because the bottom 5% to 10% of India’s population experienced the highest percentage growth in their consumption spending compared to previous years.
