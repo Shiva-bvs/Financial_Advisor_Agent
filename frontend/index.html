@@ -21,6 +21,7 @@
         </a>
         <nav class="nav-links">
             <a href="#features">Features</a>
+            <a href="#upi-analytics">UPI Analytics</a>
             <a href="#how-it-works">How it Works</a>
             <a href="#pricing">Pricing</a>
             <a href="#about-us">About Us</a>
@@ -31,12 +32,12 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
-            <h1>Meet Your New AI<br>Financial Advisor</h1>
-            <p>Automate your savings, optimize your investments, and get personalized financial advice 24/7 with our
-                intelligent AI agent.</p>
+            <h1>Meet Your New AI<br>Financial Advisor &<br>UPI Analytics Hub</h1>
+            <p>Automate your wealth management, optimize investments, and monitor real-time merchant UPI transactions,
+                fee breakdowns, and bank settlements (T+1/T+2) with AI precision.</p>
             <div class="hero-buttons">
-                <a href="#" class="btn-primary">Start for Free</a>
-                <a href="#" class="btn-secondary">Watch Demo</a>
+                <a href="#upi-analytics" class="btn-primary">Explore UPI Analytics</a>
+                <a href="#features" class="btn-secondary">Core Features</a>
             </div>
         </div>
         <div class="hero-image">
@@ -50,19 +51,184 @@
         <div class="features-grid">
             <div class="feature-card glass-panel">
                 <i class="fa-solid fa-robot feature-icon"></i>
-                <h3>24/7 AI Chat</h3>
-                <p>Text description of the AI conversational agent providing instant advice and answering financial
-                    questions.</p>
+                <h3>24/7 AI Advisory</h3>
+                <p>Conversational financial agent grounded in guru philosophies (Buffett, Kiyosaki, Sethi) and Indian
+                    tax laws (80C, 80D, Old vs New Regime).</p>
+            </div>
+            <div class="feature-card glass-panel">
+                <i class="fa-solid fa-bolt feature-icon"></i>
+                <h3>UPI Settlement Engine</h3>
+                <p>Real-time transaction tracking across Google Pay, PhonePe, and Paytm with automated bank UTR
+                    reconciliation and fee audit.</p>
+            </div>
+            <div class="feature-card glass-panel">
+                <i class="fa-solid fa-receipt feature-icon"></i>
+                <h3>OCR & Receipt Scanner</h3>
+                <p>Extract transactions and balances from receipts, screenshots, and bank statements automatically via
+                    multimodal vision models.</p>
             </div>
             <div class="feature-card glass-panel">
                 <i class="fa-solid fa-chart-line feature-icon"></i>
-                <h3>Automated Investing</h3>
-                <p>Text description of how the AI automatically moves money into high-yield accounts or index funds.</p>
+                <h3>Spending Pattern Matcher</h3>
+                <p>Compares your spending with national averages (HCES 2023-24) to optimize savings and allocate wealth
+                    into high-yield instruments.</p>
             </div>
-            <div class="feature-card glass-panel">
-                <i class="fa-solid fa-bullseye feature-icon"></i>
-                <h3>Goal Tracking</h3>
-                <p>Text description of visual trackers for retirement, vacations, and emergency funds.</p>
+        </div>
+    </section>
+
+    <!-- UPI Transaction Analysis & Settlement Tracking Dashboard Section -->
+    <section id="upi-analytics" class="upi-section">
+        <div class="section-title">
+            <span class="badge-pill">Enterprise Merchant Feature</span>
+            <h2>UPI Business Analytics & Settlement Portal</h2>
+            <p>Live transaction monitoring, MDR fee transparency, NPCI clearance tracking, and bank settlement batches.
+            </p>
+        </div>
+
+        <!-- KPI Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card glass-panel">
+                <span class="kpi-label">Total Volume</span>
+                <div class="kpi-value" id="kpi-volume">₹2,63,290.00</div>
+                <div class="kpi-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> 68 Transactions</div>
+            </div>
+            <div class="kpi-card glass-panel">
+                <span class="kpi-label">Successfully Settled</span>
+                <div class="kpi-value text-success" id="kpi-settled">₹2,60,902.70</div>
+                <div class="kpi-trend positive">97.1% Success Rate</div>
+            </div>
+            <div class="kpi-card glass-panel">
+                <span class="kpi-label">Processing Fees (MDR + GST)</span>
+                <div class="kpi-value text-danger" id="kpi-fees">₹2,387.30</div>
+                <div class="kpi-trend text-secondary">Razorpay & BillDesk</div>
+            </div>
+            <div class="kpi-card glass-panel">
+                <span class="kpi-label">Pending Bank Settlement</span>
+                <div class="kpi-value text-amber" id="kpi-pending">₹9,050.00</div>
+                <div class="kpi-trend">T+1 Batch Processing</div>
+            </div>
+        </div>
+
+        <!-- Analytics Content Layout -->
+        <div class="upi-layout-grid">
+            <!-- Left Column: Settlement Trend & Batches -->
+            <div class="upi-main-column">
+                <div class="chart-card glass-panel">
+                    <div class="card-header">
+                        <h3>7-Day Settlement Trend & Payouts</h3>
+                        <span class="chip">Gross vs. Fees vs. Net</span>
+                    </div>
+                    <div class="chart-container">
+                        <img src="/assets/settlement_trend.png" alt="7-Day Settlement Trend"
+                            onerror="this.style.display='none'; document.getElementById('chart-placeholder').style.display='block';">
+                        <div id="chart-placeholder"
+                            style="display:none; padding: 40px; text-align: center; color: var(--text-secondary);">
+                            <i class="fa-solid fa-chart-simple" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
+                            <p>Settlement trend chart is loading or active in backend...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-card glass-panel">
+                    <div class="card-header">
+                        <h3>Recent Settlement Batches & Bank UTRs</h3>
+                        <span class="chip bg-blue">Bank Grade</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="settlement-batches-table">
+                            <thead>
+                                <tr>
+                                    <th>Batch Date</th>
+                                    <th>PSP Provider</th>
+                                    <th>Txns</th>
+                                    <th>Net Settled</th>
+                                    <th>Bank UTR Reference</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="settlement-batches-body">
+                                <tr>
+                                    <td>Today (Pending)</td>
+                                    <td>RAZORPAY</td>
+                                    <td>4</td>
+                                    <td>₹8,969.50</td>
+                                    <td><em>Awaiting Bank UTR</em></td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Yesterday</td>
+                                    <td>RAZORPAY</td>
+                                    <td>5</td>
+                                    <td>₹21,885.20</td>
+                                    <td><code>UTRRZP20260815992</code></td>
+                                    <td><span class="status-badge status-success">Settled</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Yesterday</td>
+                                    <td>BILLDESK</td>
+                                    <td>5</td>
+                                    <td>₹21,918.40</td>
+                                    <td><code>UTRBIL20260815992</code></td>
+                                    <td><span class="status-badge status-success">Settled</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: PSP Fees, App Breakdown & Live Payment Test -->
+            <div class="upi-side-column">
+                <div class="breakdown-card glass-panel">
+                    <h3>Fees & Volume by PSP</h3>
+                    <div class="psp-fee-list">
+                        <div class="psp-row">
+                            <div class="psp-name"><i class="fa-solid fa-credit-card"></i> Razorpay UPI</div>
+                            <div class="psp-meta"><strong>₹1,31,450</strong> (₹1,195 fees)</div>
+                        </div>
+                        <div class="psp-row">
+                            <div class="psp-name"><i class="fa-solid fa-building-columns"></i> BillDesk</div>
+                            <div class="psp-meta"><strong>₹1,31,840</strong> (₹1,192 fees)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="breakdown-card glass-panel">
+                    <h3>Supported UPI Apps</h3>
+                    <div class="app-badges-grid">
+                        <span class="app-badge"><i class="fa-brands fa-google-pay"></i> Google Pay</span>
+                        <span class="app-badge"><i class="fa-solid fa-mobile-screen"></i> PhonePe</span>
+                        <span class="app-badge"><i class="fa-solid fa-wallet"></i> Paytm</span>
+                        <span class="app-badge"><i class="fa-brands fa-whatsapp"></i> WhatsApp Pay</span>
+                        <span class="app-badge"><i class="fa-solid fa-gem"></i> CRED</span>
+                        <span class="app-badge"><i class="fa-solid fa-shield-halved"></i> BHIM NPCI</span>
+                    </div>
+                </div>
+
+                <div class="simulator-card glass-panel">
+                    <h3><i class="fa-solid fa-paper-plane"></i> UPI Payment Sandbox</h3>
+                    <form id="upi-initiate-form" onsubmit="handleQuickPayment(event)">
+                        <div class="form-group">
+                            <label>Amount (₹)</label>
+                            <input type="number" id="sim-amount" value="2500" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Customer UPI VPA</label>
+                            <input type="text" id="sim-upi-id" value="merchant.customer@okhdfcbank" required>
+                        </div>
+                        <div class="form-group">
+                            <label>PSP Gateway</label>
+                            <select id="sim-psp">
+                                <option value="razorpay">Razorpay</option>
+                                <option value="billdesk">BillDesk</option>
+                                <option value="payu">PayU</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary"
+                            style="width: 100%; padding: 10px; font-size: 0.95rem;">Test Ingestion</button>
+                        <div id="sim-result" style="margin-top: 10px; font-size: 0.85rem; display: none;"></div>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
@@ -73,28 +239,83 @@
         <div class="steps-container">
             <div class="step-card glass-panel">
                 <div class="step-number">1</div>
-                <h3>Connect Accounts</h3>
-                <p>Securely link your bank and brokerage accounts.</p>
+                <h3>Connect Accounts & UPI</h3>
+                <p>Link your bank accounts, Razorpay/BillDesk webhooks, and Splitwise securely.</p>
             </div>
             <div class="step-card glass-panel">
                 <div class="step-number">2</div>
-                <h3>AI Analysis</h3>
-                <p>Our agent analyzes your spending and income patterns.</p>
+                <h3>AI & Settlement Engine</h3>
+                <p>Autonomous AI reconciles transactions, checks UTR numbers, and detects fee variances.</p>
             </div>
             <div class="step-card glass-panel">
                 <div class="step-number">3</div>
-                <h3>Grow Wealth</h3>
-                <p>Approve AI-suggested transfers and watch your money grow.</p>
+                <h3>Grow & Optimize</h3>
+                <p>Receive actionable tax planning, automated budgeting, and transparent merchant payouts.</p>
             </div>
         </div>
     </section>
 
     <!-- Call to Action Section -->
     <section class="cta-section glass-panel">
-        <h2>Ready to take control of your finances?</h2>
-        <p>Join thousands of users who are automating their wealth building.</p>
-        <a href="#" class="btn-primary" style="padding: 16px 32px; font-size: 1.2rem;">Create Your Account</a>
+        <h2>Ready to optimize your finances & UPI settlements?</h2>
+        <p>Join thousands of individuals and growing merchants building wealth intelligently.</p>
+        <a href="#" class="btn-primary" style="padding: 16px 32px; font-size: 1.2rem;">Get Started Now</a>
     </section>
+
+    <script>
+        async function handleQuickPayment(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const resultDiv = document.getElementById('sim-result');
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+
+            const payload = {
+                merchant_id: "MERCHANT_001",
+                amount: parseFloat(document.getElementById('sim-amount').value),
+                customer_id: "cust_web_demo",
+                upi_id: document.getElementById('sim-upi-id').value,
+                payment_app: "google_pay",
+                psp_provider: document.getElementById('sim-psp').value
+            };
+
+            try {
+                const res = await fetch('/api/upi/initiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `<span style="color: #10b981; font-weight: 600;">✓ Initiated: ${data.psp_reference_id}</span><br>Est. Fee: ₹${(data.psp_fee + data.gst_fee).toFixed(2)} | Net: ₹${data.net_amount_to_merchant.toFixed(2)}`;
+            } catch (err) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `<span style="color: #ef4444;">Error: ${err.message}</span>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Test Ingestion";
+            }
+        }
+
+        // Live KPI fetching from API if available
+        async function loadLiveKPIs() {
+            try {
+                const res = await fetch('/api/upi/kpis?merchant=MERCHANT_001');
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data.total_gross_volume !== undefined) {
+                    document.getElementById('kpi-volume').innerText = '₹' + data.total_gross_volume.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    document.getElementById('kpi-settled').innerText = '₹' + data.total_net_settled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    document.getElementById('kpi-fees').innerText = '₹' + data.total_fees_incurred.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    document.getElementById('kpi-pending').innerText = '₹' + data.pending_settlement_amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                }
+            } catch (e) {
+                // Keep static seed defaults
+            }
+        }
+        document.addEventListener('DOMContentLoaded', loadLiveKPIs);
+    </script>
+
 
     <!-- Footer -->
     <footer class="site-footer">

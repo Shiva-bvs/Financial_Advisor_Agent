@@ -20,7 +20,11 @@ from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.prebuilt import create_react_agent
 
-load_dotenv()
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+else:
+    load_dotenv()
 
 FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
 NEWSDATA_API_KEY = os.getenv("NEWSDATA_API_KEY")
@@ -30,6 +34,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GOOGLE_DRIVE_API_KEY = os.getenv("GOOGLE_DRIVE_API_KEY")
 GMAIL_API_KEY = os.getenv("GMAIL_API_KEY")
 
+
 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 vector_store = None
 
@@ -37,6 +42,7 @@ def init_vector_store():
     global vector_store
     try:
         pdf_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'financial_report.pdf')
+
         if os.path.exists(pdf_path) and embeddings:
             loader = PyPDFLoader(pdf_path)
             docs = loader.load()
@@ -296,6 +302,81 @@ def analyze_all_client_assets() -> str:
     except Exception as e:
         return f"Error analyzing assets: {str(e)}"
 
+try:
+    from App.upi_settlement_engine import (
+        get_merchant_kpi_summary, get_transaction_analytics, get_settlement_summary,
+        get_reconciliation_report, initiate_upi_payment, generate_settlement_analytics_chart
+    )
+except ImportError:
+    from upi_settlement_engine import (
+        get_merchant_kpi_summary, get_transaction_analytics, get_settlement_summary,
+        get_reconciliation_report, initiate_upi_payment, generate_settlement_analytics_chart
+    )
+
+@tool
+def analyze_upi_settlements_and_transactions(merchant_id: str = "MERCHANT_001") -> str:
+    """Analyze UPI transactions, merchant volume, fee breakdown by PSP/App, and generate 7-day settlement trends."""
+    try:
+        kpis = get_merchant_kpi_summary(merchant_id)
+        chart_path = generate_settlement_analytics_chart(merchant_id)
+        
+        psp_summary = "\n".join([f"  - {psp.upper()}: Volume INR {v['volume']:,.2f} | Fees INR {v['fees']:,.2f} ({v['count']} txns)" for psp, v in kpis['psp_breakdown'].items()])
+        app_summary = ", ".join([f"{app}: {count}" for app, count in kpis['app_breakdown'].items()])
+        
+        res = (
+            f"=== UPI TRANSACTION & SETTLEMENT SUMMARY ({merchant_id}) ===\n"
+            f"- Total Transactions: {kpis['total_transactions']} (Success: {kpis['success_count']}, Pending: {kpis['pending_count']}, Failed: {kpis['failed_count']}, Disputes: {kpis['dispute_count']})\n"
+            f"- Success Rate: {kpis['success_rate']}%\n"
+            f"- Gross Transaction Volume: INR {kpis['total_gross_volume']:,.2f}\n"
+            f"- Total Processing Fees Incurred (MDR + GST): INR {kpis['total_fees_incurred']:,.2f}\n"
+            f"- Net Settled to Bank Account: INR {kpis['total_net_settled']:,.2f}\n"
+            f"- Pending Settlement Volume: INR {kpis['pending_settlement_amount']:,.2f}\n\n"
+            f"PSP Fee & Volume Breakdown:\n{psp_summary}\n\n"
+            f"Payment Apps Distribution:\n  {app_summary}\n\n"
+            f"(Settlement trend chart generated at Assets/settlement_trend.png)"
+        )
+        return res
+    except Exception as e:
+        return f"Error analyzing UPI settlements: {str(e)}"
+
+@tool
+def check_merchant_settlement_batches(merchant_id: str = "MERCHANT_001") -> str:
+    """Query bank settlement batches, UTR numbers, bank payout timestamps, and reconciliation match status."""
+    try:
+        batches = get_settlement_summary(merchant_id)
+        if not batches:
+            return f"No settlement batches found for {merchant_id}."
+            
+        res = f"=== BANK SETTLEMENT BATCHES ({merchant_id}) ===\n"
+        for b in batches[:6]:
+            utr_str = b['utr'] if b['utr'] else "Pending Bank UTR"
+            res += f"- Batch Date: {b['batch_date']} | PSP: {b['psp_provider'].upper()} | Net Payout: INR {b['total_net']:,.2f} | Status: {b['status'].upper()} | Bank UTR: {utr_str}\n"
+            
+        recs = get_reconciliation_report(merchant_id)
+        matched_count = len([r for r in recs if r['status'] == 'matched'])
+        variance_count = len([r for r in recs if r['status'] == 'mismatch'])
+        res += f"\nReconciliation Audit Health:\n- Matched Transactions: {matched_count}\n- Variances/Discrepancies: {variance_count}\n"
+        return res
+    except Exception as e:
+        return f"Error querying settlement batches: {str(e)}"
+
+@tool
+def simulate_or_record_upi_transaction(merchant_id: str = "MERCHANT_001", amount: float = 1000.0, upi_id: str = "customer@okhdfcbank", payment_app: str = "google_pay", psp_provider: str = "razorpay") -> str:
+    """Simulate or record a new UPI transaction through the settlement pipeline with fee calculations."""
+    try:
+        txn = initiate_upi_payment(merchant_id, amount, "cust_live", upi_id, payment_app, psp_provider)
+        return (
+            f"Transaction Initiated Successfully:\n"
+            f"- Transaction Ref: {txn['psp_reference_id']}\n"
+            f"- Amount: INR {txn['amount']:.2f}\n"
+            f"- App / PSP: {txn['payment_app']} via {txn['psp_provider']}\n"
+            f"- Estimated Fee (incl. GST): INR {(txn['psp_fee'] + txn['payment_app_fee'] + txn['gst_fee']):.2f}\n"
+            f"- Net Expected Payout: INR {txn['net_amount_to_merchant']:.2f}\n"
+            f"- Status: {txn['status']}"
+        )
+    except Exception as e:
+        return f"Error initiating UPI transaction: {str(e)}"
+
 def initialize_agent():
     tools = [
         get_stock_price, 
@@ -309,7 +390,10 @@ def initialize_agent():
         search_gmail_financial_records,
         search_drive_financial_records,
         analyze_financial_image,
-        analyze_all_client_assets
+        analyze_all_client_assets,
+        analyze_upi_settlements_and_transactions,
+        check_merchant_settlement_batches,
+        simulate_or_record_upi_transaction
     ]
     
     if GROQ_API_KEY:
@@ -319,7 +403,6 @@ def initialize_agent():
     else:
         raise ValueError("No LLM API key provided. Set GROQ_API_KEY or GEMINI_API_KEY.")
 
-    # Load universal knowledge from Assets
     # Load universal knowledge from Assets
     inv_knowledge_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'universal_knowledge.txt')
     universal_knowledge = ""
@@ -348,11 +431,24 @@ def initialize_agent():
         with open(indian_currency_path, "r", encoding="utf-8") as f:
             indian_currency_protocol = f.read()
 
+    # Load UPI settlement analytics knowledge
+    upi_knowledge_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'upi_settlement_analytics.txt')
+    upi_settlement_knowledge = ""
+    if os.path.exists(upi_knowledge_path):
+        with open(upi_knowledge_path, "r", encoding="utf-8") as f:
+            upi_settlement_knowledge = f.read()
+
     sys_msg = (
-        "You are an intelligent AI Financial Advisor. Help the user analyze market data, summarize financial reports, "
-        "explain basic investment concepts, analyze spending patterns, and provide personalized budgeting advice. "
+        "You are an intelligent AI Financial Advisor and Business Analytics Assistant. Help the user analyze market data, summarize financial reports, "
+        "explain basic investment concepts, analyze personal & business spending patterns, and provide personalized budgeting & UPI settlement advice. "
         "Always remind them that you are an AI and this is not professional financial advice.\n"
         "When asked for a comprehensive financial report or to analyze a client's financial situation, ALWAYS use the `analyze_all_client_assets` tool to read all files in the Assets folder, and base your report on that data.\n\n"
+        "UPI TRANSACTION & BUSINESS SETTLEMENT TRACKING:\n"
+        "When the user asks about UPI transactions, merchant payouts, bank settlements, fee reconciliations, or UTR statuses:\n"
+        "1. Use `analyze_upi_settlements_and_transactions` to provide comprehensive transaction volume, fee breakdown (MDR + GST), and generate the 7-day settlement trend chart.\n"
+        "2. Use `check_merchant_settlement_batches` to inspect bank UTR records, settlement lag (T+1/T+2), and reconciliation variance.\n"
+        "3. Apply the UPI Settlement Guidelines below to explain the lifecycle, fee breakdown, and NPCI clearance mechanisms:\n"
+        f"{upi_settlement_knowledge}\n\n"
         "INDIAN FINANCIAL SYSTEM & CURRENCY PROTOCOL:\n"
         f"{indian_currency_protocol}\n\n"
         "SPENDING ANALYSIS INSTRUCTIONS:\n"
@@ -382,6 +478,8 @@ def initialize_agent():
             # Fallback for older versions if needed
             agent = create_react_agent(llm, tools=tools, messages_modifier=sys_msg)
         except Exception:
+            agent = create_react_agent(llm, tools=tools)
+
             agent = create_react_agent(llm, tools=tools)
     return agent
 

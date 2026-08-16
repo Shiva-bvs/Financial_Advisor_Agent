@@ -149,48 +149,29 @@ financial-advisor-agent/
 
 ---
 
-## ✨ Core Features (Track A)
-- 📸 **Screenshot Expense Extraction** — upload a payment screenshot, get a structured transaction
-- 💡 **Basic Financial Advice** — guidance grounded in established financial philosophies
-- 🏷️ **Spending Categorization** — automatic tagging (groceries, transport, dining, etc.)
-- 📊 **Simple Budgeting** — spending summaries and budget recommendations
+## ✨ Core Features
+- 📸 **Screenshot & Receipt OCR Extraction** — upload a payment screenshot/invoice, get a structured transaction
+- 💡 **Financial Advisory Engine** — guidance grounded in guru philosophies (Warren Buffett, Robert Kiyosaki, Ramit Sethi) and Indian tax laws (80C, 80D, Old vs New Regime)
+- 💳 **UPI Transaction & Settlement Engine** — real-time tracking across Google Pay, PhonePe, and Paytm with Razorpay & BillDesk webhook ingestion
+- 🏦 **Automated Bank UTR Reconciliation** — daily batch settlement tracking (T+1/T+2), fee breakdown transparency (MDR + 18% GST), and variance detection
+- 📊 **National Spending Pattern Comparison** — benchmark personal/business spending against Indian HCES 2023-24 averages
+- ⚡ **Interactive Streamlit & Web Dashboard** — multi-tab advisory portal with live UPI simulator and settlement trend visualizations
 
 ---
 
-## 📅 Progress & Weekly Outputs
-
-### Week 1 Output
-- **Project Initialization & Homepage Design**
-- Status: ✅ Complete
-
-#### Deliverables:
-1. **Homepage UI/UX Design Document** 
-   - Comprehensive interactive dashboard mockup
-   - Modern financial application interface
-   - Key sections: Expense Overview, Financial Advice Portal, Budget Analyzer
-   - User onboarding flow visualization
-   - Responsive design for desktop and tablet views
-
-2. **Design Specifications:**
-   - Color scheme optimized for financial data visualization
-   - Typography hierarchy for clear information hierarchy
-   - Interactive components and user interaction flows
-   - Navigation structure for seamless user experience
-
-3. **Output Files:**
-   - 📄 [`docs/Homepage_AI_Financial_Advisor.pdf`](docs/Homepage_AI_Financial_Advisor.pdf) - Complete UI/UX design document with mockups and specifications
-
-All design documentation and project assets are available in the `/docs` folder.
+## 📚 Documentation
+- 📄 [UPI Transaction Analysis & Settlement Architecture Guide](docs/UPI_TRANSACTION_SETTLEMENT_GUIDE.md)
+- 📄 [Homepage UI/UX Design Document](docs/Homepage_AI_Financial_Advisor.pdf)
 
 ---
 
 ## 🗺️ Roadmap
-- [ ] OCR pipeline for screenshots/receipts
-- [ ] Splitwise integration
-- [ ] Expense categorization engine
-- [ ] Financial advisory module (guru-grounded)
-- [ ] Streamlit dashboard
-- [ ] Deployment to Streamlit Cloud
+- [x] UPI Transaction & Settlement Analytics Engine
+- [x] Bank UTR Reconciliation & Fee Audit Module
+- [x] LangChain ReAct Advisory Agent with Indian Tax & Currency Protocol
+- [x] Multi-tab Streamlit Dashboard with Payment Sandbox
+- [x] FastAPI REST API with Webhook Listeners
+- [ ] Production deployment to Streamlit Cloud / Render
 
 ---
 
@@ -203,3 +184,4 @@ Contributions are welcome! Please ensure your code follows the project structure
 ## 📄 License
 
 This project is part of an educational AI agent development initiative.
+

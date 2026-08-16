@@ -1,0 +1,58 @@
+# UPI TRANSACTION ANALYSIS & SETTLEMENT TRACKING KNOWLEDGE BASE
+
+## 1. UPI Payment Integration Architecture & Approaches
+
+### Direct API & Aggregator Integrations:
+1. **Razorpay UPI (Enterprise-Ready & Real-Time Tracking)**:
+   - Webhook events for every state change: `payment.authorized`, `payment.captured`, `payment.failed`, `refund.processed`.
+   - Built-in settlement tracking with `settlement.processed` webhook notifications.
+   - Per-transaction fee visibility (MDR percentage + fixed fee + 18% GST).
+   - Dispute and chargeback management endpoints.
+
+2. **BillDesk UPI (Bank-Grade High Throughput)**:
+   - Dual-settlement options: T+1 (next business day) and T+2 (second business day).
+   - High-throughput direct NPCI visibility for audit trails.
+   - Reconciliation APIs to query settled vs. pending amounts and bank UTRs.
+
+3. **Direct Payment App APIs**:
+   - Google Pay for Business (`transactionList`, `settlements` endpoints).
+   - Paytm for Business (Settlement report downloads, webhooks).
+   - PhonePe Merchant APIs (Direct QR and in-app intent integration).
+
+---
+
+## 2. Transaction Lifecycle & Timestamps
+A robust UPI transaction tracks four critical chronological timestamps:
+1. `initiated_at`: Customer initiates payment via UPI intent or QR scan.
+2. `customer_authorized_at`: Customer enters 4-6 digit UPI PIN on their PSP app (Google Pay, PhonePe, Paytm, BHIM, Cred, WhatsApp Pay).
+3. `cleared_by_npci_at`: NPCI (National Payments Corporation of India) switches the transaction and settles between remitter and beneficiary banks.
+4. `settled_at`: Payment aggregator/acquiring bank transfers the net funds to the merchant's registered bank account with a Unique Transaction Reference (UTR).
+
+---
+
+## 3. Financial Breakdown & Fee Calculation Model
+For every merchant transaction:
+- **Gross Amount**: Amount paid by the customer.
+- **PSP Fee**: Aggregator fee (e.g. 1.8% to 2.0% for Credit Cards / Wallets; 0% for standard P2M UPI <= ₹2000 under zero-MDR mandate, or ~0.5%–1.1% for Prepaid Payment Instruments / Corporate UPI).
+- **Payment App Fee**: Optional interchange or platform surcharge where applicable.
+- **GST Fee**: 18% Goods & Services Tax levied on total processing fees (`(psp_fee + payment_app_fee) * 0.18`).
+- **Net Amount to Merchant**: `Gross Amount - (PSP Fee + Payment App Fee + GST Fee)`.
+
+---
+
+## 4. Settlement Batches & Reconciliation Rules
+Settlement occurs in aggregated daily batches hitting the merchant's bank account:
+- **Settlement Batch Structure**: Contains `batch_date`, `psp_provider`, `total_transactions`, `total_gross`, `total_fees`, `total_net`, `utr` (Unique Transaction Reference), and `bank_settlement_time`.
+- **Reconciliation Engine Matching**:
+  - `matched`: Transaction reference exists in settlement report and net amounts match perfectly.
+  - `mismatch`: Transaction found but variance detected between calculated net amount and actual settled payout (e.g. unexpected fee deduction, dispute hold).
+  - `unmatched`: Transaction cleared by NPCI but missing from the aggregator settlement batch within the SLA period (T+1/T+2).
+- **Settlement Lag Metric**: Calculated as `bank_settlement_time - cleared_by_npci_at`.
+
+---
+
+## 5. Webhook Reliability & Engineering Standards
+1. **Idempotency**: Webhook deliveries can be retried multiple times. Transactions must store unique `psp_reference_id` or `idempotency_key` to avoid duplicate processing.
+2. **Signature Verification**: Validate HMAC SHA256 signatures using the PSP secret key to prevent spoofing.
+3. **Retry & Backoff**: Failed webhook handlers must return HTTP 500 to trigger aggregator exponential backoff, while maintaining an internal dead-letter queue.
+4. **Audit Trail**: Every incoming payload must be logged for dispute resolution and financial reconciliation.
