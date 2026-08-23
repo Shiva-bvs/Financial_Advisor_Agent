@@ -4,172 +4,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage | AI Financial Advisor</title>
+    <title>FinVista AI | Autonomous Financial Advisor & UPI Analytics Hub</title>
     <meta name="description"
-        content="Meet your new AI financial advisor. Automate savings, optimize investments, and get personalized 24/7 financial advice.">
+        content="AI-powered personal wealth advisory, guru-grounded recommendations, multi-format expense tracking, and real-time enterprise UPI settlement analytics.">
     <link rel="stylesheet" href="styles.css">
-    <!-- Using FontAwesome for simple icons -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 
-    <!-- Header -->
+    <!-- Sticky Navigation Header -->
     <header class="site-header glass-panel">
         <a href="#" class="logo">
-            <img src="images/logo.png" alt="AI Financial Advisor Logo">
+            <img src="images/logo.png" alt="FinVista AI Logo" id="header-logo">
+            <span class="logo-text">FinVista <span class="accent-text">AI</span></span>
         </a>
         <nav class="nav-links">
-            <a href="#features">Features</a>
-            <a href="#upi-analytics">UPI Analytics</a>
-            <a href="#how-it-works">How it Works</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#about-us">About Us</a>
+            <a href="#hero"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="#ai-chat"><i class="fa-solid fa-robot"></i> AI Advisor</a>
+            <a href="#expense-hub"><i class="fa-solid fa-receipt"></i> Expense Hub</a>
+            <a href="#guru-wisdom"><i class="fa-solid fa-lightbulb"></i> Guru Wisdom</a>
+            <a href="#upi-analytics"><i class="fa-solid fa-chart-line"></i> UPI Analytics</a>
+            <a href="#budget-goals"><i class="fa-solid fa-bullseye"></i> Budgets & Goals</a>
         </nav>
-        <a href="#" class="btn-primary">Login / Sign Up</a>
+        <div class="header-actions">
+            <a href="http://localhost:8501" target="_blank" class="btn-streamlit" id="btn-open-streamlit">
+                <i class="fa-solid fa-rocket"></i> Open Streamlit App
+            </a>
+            <a href="#ai-chat" class="btn-primary" id="btn-quick-chat">
+                <i class="fa-solid fa-comments"></i> Chat Now
+            </a>
+        </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section id="hero" class="hero-section">
         <div class="hero-content">
-            <h1>Meet Your New AI<br>Financial Advisor &<br>UPI Analytics Hub</h1>
-            <p>Automate your wealth management, optimize investments, and monitor real-time merchant UPI transactions,
-                fee breakdowns, and bank settlements (T+1/T+2) with AI precision.</p>
+            <div class="badge-pill pulse-badge"><i class="fa-solid fa-sparkles"></i> AI Wealth & Business Intelligence</div>
+            <h1>Autonomous AI <br><span class="gradient-text">Financial Advisor</span> &<br>UPI Analytics Portal</h1>
+            <p>Personalized wealth advisory grounded in classic financial guru principles, automated multi-format expense ingestion, Indian tax optimization (80C, 80D, Old vs New), and real-time merchant UPI settlement tracking.</p>
             <div class="hero-buttons">
-                <a href="#upi-analytics" class="btn-primary">Explore UPI Analytics</a>
-                <a href="#features" class="btn-secondary">Core Features</a>
+                <a href="#ai-chat" class="btn-primary btn-large" id="hero-btn-advisor">
+                    <i class="fa-solid fa-headset"></i> Launch AI Advisor
+                </a>
+                <a href="http://localhost:8501" target="_blank" class="btn-secondary btn-large" id="hero-btn-workspace">
+                    <i class="fa-solid fa-up-right-from-square"></i> Full Streamlit Dashboard
+                </a>
+            </div>
+            
+            <div class="hero-stats-row">
+                <div class="hero-stat-item">
+                    <span class="stat-num">5+</span>
+                    <span class="stat-desc">Guru Frameworks</span>
+                </div>
+                <div class="hero-stat-item">
+                    <span class="stat-num">5 Format</span>
+                    <span class="stat-desc">Expense Ingestion</span>
+                </div>
+                <div class="hero-stat-item">
+                    <span class="stat-num">T+1 / T+2</span>
+                    <span class="stat-desc">UPI Settlement Audit</span>
+                </div>
             </div>
         </div>
-        <div class="hero-image">
-            <img src="images/hero.png" alt="AI Dashboard Interface">
+        
+        <div class="hero-image-wrapper">
+            <div class="floating-glass-card card-1">
+                <i class="fa-solid fa-shield-halved text-teal"></i>
+                <div>
+                    <strong>97.1% Settlement Health</strong>
+                    <p>Automated Bank UTR Match</p>
+                </div>
+            </div>
+            <div class="floating-glass-card card-2">
+                <i class="fa-solid fa-chart-pie text-gold"></i>
+                <div>
+                    <strong>₹1,00,000 Income Plan</strong>
+                    <p>50/30/20 Conscious Allocation</p>
+                </div>
+            </div>
+            <img src="images/hero.png" alt="FinVista AI Dashboard Preview" class="hero-img">
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <h2>Core Capabilities</h2>
-        <div class="features-grid">
-            <div class="feature-card glass-panel">
-                <i class="fa-solid fa-robot feature-icon"></i>
-                <h3>24/7 AI Advisory</h3>
-                <p>Conversational financial agent grounded in guru philosophies (Buffett, Kiyosaki, Sethi) and Indian
-                    tax laws (80C, 80D, Old vs New Regime).</p>
+    <!-- SECTION 1: INTERACTIVE AI FINANCIAL ADVISOR CHAT -->
+    <section id="ai-chat" class="section-container">
+        <div class="section-title">
+            <span class="badge-pill">Interactive Intelligence</span>
+            <h2>24/7 AI Financial Advisor Chat</h2>
+            <p>Formulate wealth strategies, compare Old vs New Tax Regimes, or audit merchant UPI settlements with your choice of financial persona.</p>
+        </div>
+
+        <div class="chat-wrapper glass-panel">
+            <div class="chat-header-bar">
+                <div class="advisor-info">
+                    <div class="advisor-avatar"><i class="fa-solid fa-user-tie"></i></div>
+                    <div>
+                        <h4 id="active-persona-title">Wealth & Tax Strategist</h4>
+                        <span class="online-indicator"><i class="fa-solid fa-circle"></i> Online & Grounded in Knowledge Base</span>
+                    </div>
+                </div>
+                <div class="persona-selector-wrapper">
+                    <label for="chat-persona-select"><i class="fa-solid fa-sliders"></i> Persona:</label>
+                    <select id="chat-persona-select" class="styled-select" onchange="changePersona()">
+                        <option value="Wealth & Tax Strategist">Wealth & Tax Strategist</option>
+                        <option value="Warren Buffett">Warren Buffett (Value & Long Term)</option>
+                        <option value="Dave Ramsey">Dave Ramsey (Debt Snowball & Peace)</option>
+                        <option value="Ramit Sethi">Ramit Sethi (Conscious Spending)</option>
+                    </select>
+                </div>
             </div>
-            <div class="feature-card glass-panel">
-                <i class="fa-solid fa-bolt feature-icon"></i>
-                <h3>UPI Settlement Engine</h3>
-                <p>Real-time transaction tracking across Google Pay, PhonePe, and Paytm with automated bank UTR
-                    reconciliation and fee audit.</p>
+
+            <!-- Quick Prompts Row -->
+            <div class="quick-prompts-bar">
+                <span class="quick-prompt-chip" onclick="sendQuickPrompt('Explain whether Old or New Tax Regime is better for ₹15 Lakh salary with 80C and NPS.')">
+                    📑 Old vs New Tax Regime
+                </span>
+                <span class="quick-prompt-chip" onclick="sendQuickPrompt('Analyze my UPI transaction volume, fee breakdown, and settlement health for MERCHANT_001.')">
+                    📊 UPI Settlement Audit
+                </span>
+                <span class="quick-prompt-chip" onclick="sendQuickPrompt('What are Warren Buffett\'s top 3 rules for emergency reserves and index investing?')">
+                    📈 Buffett Investment Rules
+                </span>
+                <span class="quick-prompt-chip" onclick="sendQuickPrompt('How do I build a 50/30/20 budget for a monthly salary of ₹1,00,000?')">
+                    💡 50/30/20 Budgeting Plan
+                </span>
             </div>
-            <div class="feature-card glass-panel">
-                <i class="fa-solid fa-receipt feature-icon"></i>
-                <h3>OCR & Receipt Scanner</h3>
-                <p>Extract transactions and balances from receipts, screenshots, and bank statements automatically via
-                    multimodal vision models.</p>
+
+            <!-- Chat Message Box -->
+            <div class="chat-body" id="chat-messages">
+                <div class="chat-msg assistant-msg">
+                    <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                    <div class="msg-content">
+                        Hello! I am your AI Financial Advisor. How can I assist you with personal wealth planning, tax minimization, expense analysis, or merchant UPI bank settlement tracking today?
+                    </div>
+                </div>
             </div>
-            <div class="feature-card glass-panel">
-                <i class="fa-solid fa-chart-line feature-icon"></i>
-                <h3>Spending Pattern Matcher</h3>
-                <p>Compares your spending with national averages (HCES 2023-24) to optimize savings and allocate wealth
-                    into high-yield instruments.</p>
+
+            <!-- PDF Knowledge Base Uploader Bar -->
+            <div class="pdf-upload-bar">
+                <i class="fa-solid fa-file-pdf text-red"></i>
+                <span>Add Knowledge PDF:</span>
+                <input type="file" id="pdf-file-input" accept=".pdf" style="display:none;" onchange="uploadPDFKnowledge(event)">
+                <button class="btn-sm-secondary" onclick="document.getElementById('pdf-file-input').click()"><i class="fa-solid fa-upload"></i> Upload PDF Article/Book</button>
+                <span id="pdf-upload-status" class="pdf-status-text"></span>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="chat-input-bar">
+                <input type="text" id="chat-user-input" placeholder="Ask about personal finance, tax rules, or UPI settlement analytics..." onkeydown="if(event.key === 'Enter') sendChatMessage()">
+                <button class="btn-primary" onclick="sendChatMessage()" id="btn-send-message">
+                    <i class="fa-solid fa-paper-plane"></i> Send
+                </button>
             </div>
         </div>
     </section>
 
-    <!-- UPI Transaction Analysis & Settlement Tracking Dashboard Section -->
-    <section id="upi-analytics" class="upi-section">
+    <!-- SECTION 2: MULTI-FORMAT EXPENSE HUB -->
+    <section id="expense-hub" class="section-container">
+        <div class="section-title">
+            <span class="badge-pill">Multi-Format Ingestion</span>
+            <h2>Expense Intelligence & OCR Scanner</h2>
+            <p>Import financial data seamlessly across spreadsheets, statements, and receipt screenshots with input validation.</p>
+        </div>
+
+        <div class="format-grid">
+            <div class="format-card glass-panel">
+                <div class="format-icon"><i class="fa-solid fa-file-csv text-teal"></i></div>
+                <h3>CSV Spreadsheets</h3>
+                <p>Auto-detects date, amount, category, and description headers with row validation.</p>
+            </div>
+            <div class="format-card glass-panel">
+                <div class="format-icon"><i class="fa-solid fa-file-excel text-green"></i></div>
+                <h3>Excel Workbooks</h3>
+                <p>Supports multi-sheet <code>.xlsx</code> and <code>.xls</code> files via openpyxl.</p>
+            </div>
+            <div class="format-card glass-panel">
+                <div class="format-icon"><i class="fa-solid fa-code text-gold"></i></div>
+                <h3>JSON Payloads</h3>
+                <p>Parse structured array lists or API transaction outputs instantly.</p>
+            </div>
+            <div class="format-card glass-panel">
+                <div class="format-icon"><i class="fa-solid fa-file-pdf text-red"></i></div>
+                <h3>Bank Statement PDF</h3>
+                <p>Parses tabular credit card and bank statements directly.</p>
+            </div>
+            <div class="format-card glass-panel">
+                <div class="format-icon"><i class="fa-solid fa-camera text-purple"></i></div>
+                <h3>OCR Receipt Vision</h3>
+                <p>Gemini multimodal vision model extracts receipt totals, dates, and line items with fallback error diagnostic callouts.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: FINANCIAL GURU WISDOM -->
+    <section id="guru-wisdom" class="section-container">
+        <div class="section-title">
+            <span class="badge-pill">Timeless Wisdom</span>
+            <h2>Grounded in Legendary Financial Guru Principles</h2>
+            <p>Tailored recommendations combining classic value investing, debt elimination, and conscious spending.</p>
+        </div>
+
+        <div class="gurus-grid">
+            <div class="guru-card glass-panel">
+                <div class="guru-header">
+                    <i class="fa-solid fa-chart-line guru-icon"></i>
+                    <h3>Warren Buffett</h3>
+                </div>
+                <ul class="guru-bullet-list">
+                    <li><strong>Rule #1:</strong> Never lose money. <strong>Rule #2:</strong> Never forget rule #1.</li>
+                    <li>Pay yourself first — set up automated SIP transfers before spending.</li>
+                    <li>Invest in low-cost index funds (Nifty 50 / S&P 500).</li>
+                </ul>
+            </div>
+
+            <div class="guru-card glass-panel">
+                <div class="guru-header">
+                    <i class="fa-solid fa-shield-cat guru-icon"></i>
+                    <h3>Dave Ramsey</h3>
+                </div>
+                <ul class="guru-bullet-list">
+                    <li><strong>Baby Step 1:</strong> Build ₹50,000 starter emergency fund.</li>
+                    <li><strong>Baby Step 2:</strong> Eliminate debt via Debt Snowball.</li>
+                    <li><strong>Baby Step 3:</strong> Build 3 to 6 months full emergency reserve.</li>
+                </ul>
+            </div>
+
+            <div class="guru-card glass-panel">
+                <div class="guru-header">
+                    <i class="fa-solid fa-wallet guru-icon"></i>
+                    <h3>Ramit Sethi</h3>
+                </div>
+                <ul class="guru-bullet-list">
+                    <li><strong>Fixed Costs:</strong> Allocate 50-60% for housing & bills.</li>
+                    <li><strong>Guilt-Free Spending:</strong> Allocate 20-35% for passions without remorse.</li>
+                    <li>Automate savings and investments on payday.</li>
+                </ul>
+            </div>
+
+            <div class="guru-card glass-panel">
+                <div class="guru-header">
+                    <i class="fa-solid fa-brain guru-icon"></i>
+                    <h3>Morgan Housel</h3>
+                </div>
+                <ul class="guru-bullet-list">
+                    <li>Money's highest dividend is control over your time.</li>
+                    <li>Wealth is what you don't see (unspent money).</li>
+                    <li>Room for error is the single most crucial part of any financial plan.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: ENTERPRISE UPI BUSINESS ANALYTICS & SETTLEMENT TRACKER -->
+    <section id="upi-analytics" class="section-container upi-section">
         <div class="section-title">
             <span class="badge-pill">Enterprise Merchant Feature</span>
             <h2>UPI Business Analytics & Settlement Portal</h2>
-            <p>Live transaction monitoring, MDR fee transparency, NPCI clearance tracking, and bank settlement batches.
-            </p>
+            <p>Live merchant volume tracking, MDR fee breakdown, bank UTR settlement reconciliation, and payment sandbox.</p>
         </div>
 
-        <!-- KPI Grid -->
+        <!-- KPI Summary Cards -->
         <div class="kpi-grid">
             <div class="kpi-card glass-panel">
-                <span class="kpi-label">Total Volume</span>
-                <div class="kpi-value" id="kpi-volume">₹2,63,290.00</div>
-                <div class="kpi-trend positive"><i class="fa-solid fa-arrow-trend-up"></i> 68 Transactions</div>
+                <span class="kpi-label">Gross Transaction Volume</span>
+                <div class="kpi-value" id="kpi-volume">₹2,66,790.00</div>
+                <div class="kpi-subtext positive"><i class="fa-solid fa-arrow-trend-up"></i> <span id="web-kpi-txns">76</span> Transactions</div>
             </div>
+
             <div class="kpi-card glass-panel">
-                <span class="kpi-label">Successfully Settled</span>
-                <div class="kpi-value text-success" id="kpi-settled">₹2,60,902.70</div>
-                <div class="kpi-trend positive">97.1% Success Rate</div>
+                <span class="kpi-label">Net Settled to Bank</span>
+                <div class="kpi-value text-teal" id="web-kpi-net">₹2,64,369.20</div>
+                <div class="kpi-subtext positive"><i class="fa-solid fa-check-double"></i> <span id="web-kpi-rate">90.4%</span> Success Rate</div>
             </div>
+
             <div class="kpi-card glass-panel">
                 <span class="kpi-label">Processing Fees (MDR + GST)</span>
-                <div class="kpi-value text-danger" id="kpi-fees">₹2,387.30</div>
-                <div class="kpi-trend text-secondary">Razorpay & BillDesk</div>
+                <div class="kpi-value text-red" id="web-kpi-fees">₹2,420.80</div>
+                <div class="kpi-subtext">Razorpay & BillDesk</div>
             </div>
+
             <div class="kpi-card glass-panel">
-                <span class="kpi-label">Pending Bank Settlement</span>
-                <div class="kpi-value text-amber" id="kpi-pending">₹9,050.00</div>
-                <div class="kpi-trend">T+1 Batch Processing</div>
+                <span class="kpi-label">Pending Settlement Volume</span>
+                <div class="kpi-value text-gold" id="web-kpi-pending">₹9,050.00</div>
+                <div class="kpi-subtext">T+1 Batch Processing</div>
             </div>
         </div>
 
-        <!-- Analytics Content Layout -->
+        <!-- Analytics Grid Layout -->
         <div class="upi-layout-grid">
-            <!-- Left Column: Settlement Trend & Batches -->
-            <div class="upi-main-column">
-                <div class="chart-card glass-panel">
-                    <div class="card-header">
-                        <h3>7-Day Settlement Trend & Payouts</h3>
-                        <span class="chip">Gross vs. Fees vs. Net</span>
+            <div class="upi-left-col">
+                <!-- Trend Chart Box -->
+                <div class="chart-box glass-panel">
+                    <div class="box-header">
+                        <h3><i class="fa-solid fa-chart-area"></i> 7-Day Settlement & Payout Trend</h3>
+                        <span class="chip">Gross vs Fees vs Net</span>
                     </div>
-                    <div class="chart-container">
-                        <img src="/assets/settlement_trend.png" alt="7-Day Settlement Trend"
-                            onerror="this.style.display='none'; document.getElementById('chart-placeholder').style.display='block';">
-                        <div id="chart-placeholder"
-                            style="display:none; padding: 40px; text-align: center; color: var(--text-secondary);">
-                            <i class="fa-solid fa-chart-simple" style="font-size: 2.5rem; margin-bottom: 10px;"></i>
-                            <p>Settlement trend chart is loading or active in backend...</p>
-                        </div>
+                    <div class="chart-img-container">
+                        <img src="/assets/settlement_trend.png" alt="7-Day UPI Settlement Trend Chart" id="upi-trend-img"
+                            onerror="this.src='https://via.placeholder.com/800x350/0f172a/38bdf8?text=Settlement+Trend+Chart+Loading...'">
                     </div>
                 </div>
 
-                <div class="table-card glass-panel">
-                    <div class="card-header">
-                        <h3>Recent Settlement Batches & Bank UTRs</h3>
-                        <span class="chip bg-blue">Bank Grade</span>
+                <!-- Settlement Batches Table -->
+                <div class="table-box glass-panel">
+                    <div class="box-header">
+                        <h3><i class="fa-solid fa-building-columns"></i> Daily Settlement Batches & Bank UTRs</h3>
+                        <button class="btn-sm-secondary" onclick="loadLiveUPIAnalytics()"><i class="fa-solid fa-rotate"></i> Refresh</button>
                     </div>
                     <div class="table-responsive">
-                        <table class="data-table" id="settlement-batches-table">
+                        <table class="styled-table" id="settlement-batches-table">
                             <thead>
                                 <tr>
                                     <th>Batch Date</th>
                                     <th>PSP Provider</th>
                                     <th>Txns</th>
+                                    <th>Gross Volume</th>
+                                    <th>Fees (MDR+GST)</th>
                                     <th>Net Settled</th>
                                     <th>Bank UTR Reference</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="settlement-batches-body">
+                            <tbody id="tbody-batches">
                                 <tr>
-                                    <td>Today (Pending)</td>
-                                    <td>RAZORPAY</td>
-                                    <td>4</td>
-                                    <td>₹8,969.50</td>
-                                    <td><em>Awaiting Bank UTR</em></td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                    <td colspan="8" style="text-align: center; color: var(--text-secondary);">Loading settlement batches from API...</td>
                                 </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reconciliation Audit Table -->
+                <div class="table-box glass-panel">
+                    <div class="box-header">
+                        <h3><i class="fa-solid fa-magnifying-glass-dollar"></i> Transaction-Settlement Reconciliation Audit</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="styled-table" id="table-reconciliation">
+                            <thead>
                                 <tr>
-                                    <td>Yesterday</td>
-                                    <td>RAZORPAY</td>
-                                    <td>5</td>
-                                    <td>₹21,885.20</td>
-                                    <td><code>UTRRZP20260815992</code></td>
-                                    <td><span class="status-badge status-success">Settled</span></td>
+                                    <th>Payment Ref</th>
+                                    <th>Gross Amount</th>
+                                    <th>Net Payout</th>
+                                    <th>Batch Date</th>
+                                    <th>Bank UTR</th>
+                                    <th>Reconciliation</th>
+                                    <th>Audit Notes</th>
                                 </tr>
+                            </thead>
+                            <tbody id="tbody-reconciliations">
                                 <tr>
-                                    <td>Yesterday</td>
-                                    <td>BILLDESK</td>
-                                    <td>5</td>
-                                    <td>₹21,918.40</td>
-                                    <td><code>UTRBIL20260815992</code></td>
-                                    <td><span class="status-badge status-success">Settled</span></td>
+                                    <td colspan="7" style="text-align: center; color: var(--text-secondary);">Loading reconciliation audit data...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -177,178 +368,455 @@
                 </div>
             </div>
 
-            <!-- Right Column: PSP Fees, App Breakdown & Live Payment Test -->
-            <div class="upi-side-column">
-                <div class="breakdown-card glass-panel">
-                    <h3>Fees & Volume by PSP</h3>
-                    <div class="psp-fee-list">
-                        <div class="psp-row">
-                            <div class="psp-name"><i class="fa-solid fa-credit-card"></i> Razorpay UPI</div>
-                            <div class="psp-meta"><strong>₹1,31,450</strong> (₹1,195 fees)</div>
-                        </div>
-                        <div class="psp-row">
-                            <div class="psp-name"><i class="fa-solid fa-building-columns"></i> BillDesk</div>
-                            <div class="psp-meta"><strong>₹1,31,840</strong> (₹1,192 fees)</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="breakdown-card glass-panel">
-                    <h3>Supported UPI Apps</h3>
-                    <div class="app-badges-grid">
-                        <span class="app-badge"><i class="fa-brands fa-google-pay"></i> Google Pay</span>
-                        <span class="app-badge"><i class="fa-solid fa-mobile-screen"></i> PhonePe</span>
-                        <span class="app-badge"><i class="fa-solid fa-wallet"></i> Paytm</span>
-                        <span class="app-badge"><i class="fa-brands fa-whatsapp"></i> WhatsApp Pay</span>
-                        <span class="app-badge"><i class="fa-solid fa-gem"></i> CRED</span>
-                        <span class="app-badge"><i class="fa-solid fa-shield-halved"></i> BHIM NPCI</span>
-                    </div>
-                </div>
-
-                <div class="simulator-card glass-panel">
-                    <h3><i class="fa-solid fa-paper-plane"></i> UPI Payment Sandbox</h3>
-                    <form id="upi-initiate-form" onsubmit="handleQuickPayment(event)">
+            <!-- Right Column: Interactive Sandboxes -->
+            <div class="upi-right-col">
+                <div class="sandbox-box glass-panel">
+                    <h3><i class="fa-solid fa-bolt text-teal"></i> UPI Payment Sandbox</h3>
+                    <p class="sandbox-desc">Initiate a test transaction to verify MDR fee formulas and NPCI clearance timestamps.</p>
+                    
+                    <form id="form-initiate-payment" onsubmit="handlePaymentInitiate(event)">
                         <div class="form-group">
-                            <label>Amount (₹)</label>
-                            <input type="number" id="sim-amount" value="2500" required>
+                            <label for="sim-merchant">Merchant Account ID</label>
+                            <input type="text" id="sim-merchant" value="MERCHANT_001" required>
                         </div>
                         <div class="form-group">
-                            <label>Customer UPI VPA</label>
-                            <input type="text" id="sim-upi-id" value="merchant.customer@okhdfcbank" required>
+                            <label for="sim-amt">Transaction Amount (INR ₹)</label>
+                            <input type="number" id="sim-amt" value="2500" min="1" step="50" required>
                         </div>
                         <div class="form-group">
-                            <label>PSP Gateway</label>
+                            <label for="sim-upi">Customer VPA / UPI ID</label>
+                            <input type="text" id="sim-upi" value="customer@okhdfcbank" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sim-app">Payment App</label>
+                            <select id="sim-app">
+                                <option value="google_pay">Google Pay</option>
+                                <option value="phonepe">PhonePe</option>
+                                <option value="paytm">Paytm</option>
+                                <option value="whatsapp_pay">WhatsApp Pay</option>
+                                <option value="cred">CRED</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sim-psp">PSP Aggregator</label>
                             <select id="sim-psp">
                                 <option value="razorpay">Razorpay</option>
                                 <option value="billdesk">BillDesk</option>
                                 <option value="payu">PayU</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn-primary"
-                            style="width: 100%; padding: 10px; font-size: 0.95rem;">Test Ingestion</button>
-                        <div id="sim-result" style="margin-top: 10px; font-size: 0.85rem; display: none;"></div>
+                        <button type="submit" class="btn-primary btn-full" id="btn-submit-initiate">
+                            🚀 Initiate Payment
+                        </button>
                     </form>
+                    <div id="res-initiate-output" class="sandbox-output-box" style="display:none;"></div>
+                </div>
+
+                <div class="sandbox-box glass-panel">
+                    <h3><i class="fa-solid fa-satellite-dish text-purple"></i> Webhook Event Trigger</h3>
+                    <p class="sandbox-desc">Simulate asynchronous aggregator webhook callbacks for payment authorization and clearance.</p>
+                    
+                    <form id="form-webhook-trigger" onsubmit="handleWebhookTrigger(event)">
+                        <div class="form-group">
+                            <label for="wh-ref">PSP Payment Reference ID</label>
+                            <input type="text" id="wh-ref" value="pay_raz_demo_991" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="wh-event">Webhook Event Type</label>
+                            <select id="wh-event">
+                                <option value="payment.captured">payment.captured</option>
+                                <option value="payment.authorized">payment.authorized</option>
+                                <option value="payment.failed">payment.failed</option>
+                                <option value="refund.processed">refund.processed</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-secondary btn-full" id="btn-submit-webhook">
+                            📡 Trigger Webhook Payload
+                        </button>
+                    </form>
+                    <div id="res-webhook-output" class="sandbox-output-box" style="display:none;"></div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="how-it-works-section">
-        <h2>How It Works</h2>
-        <div class="steps-container">
-            <div class="step-card glass-panel">
-                <div class="step-number">1</div>
-                <h3>Connect Accounts & UPI</h3>
-                <p>Link your bank accounts, Razorpay/BillDesk webhooks, and Splitwise securely.</p>
+    <!-- SECTION 5: BUDGET & GOALS PREVIEW -->
+    <section id="budget-goals" class="section-container">
+        <div class="section-title">
+            <span class="badge-pill">Target Tracking</span>
+            <h2>Budget Optimization & Milestone Goals</h2>
+            <p>Real-time variance tracking with safe/caution/over-budget color coding.</p>
+        </div>
+
+        <div class="goals-preview-grid">
+            <div class="goal-preview-card glass-panel">
+                <div class="goal-card-header">
+                    <h4>Groceries & Household</h4>
+                    <span class="status-pill status-safe">Within Budget</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-fill fill-safe" style="width: 70%;"></div>
+                </div>
+                <div class="goal-card-meta">
+                    <span>Spent: ₹3,500</span>
+                    <span>Target: ₹5,000</span>
+                </div>
             </div>
-            <div class="step-card glass-panel">
-                <div class="step-number">2</div>
-                <h3>AI & Settlement Engine</h3>
-                <p>Autonomous AI reconciles transactions, checks UTR numbers, and detects fee variances.</p>
+
+            <div class="goal-preview-card glass-panel">
+                <div class="goal-card-header">
+                    <h4>Shopping & Apparel</h4>
+                    <span class="status-pill status-caution">86.6% Used</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-fill fill-caution" style="width: 86.6%;"></div>
+                </div>
+                <div class="goal-card-meta">
+                    <span>Spent: ₹5,200</span>
+                    <span>Target: ₹6,000</span>
+                </div>
             </div>
-            <div class="step-card glass-panel">
-                <div class="step-number">3</div>
-                <h3>Grow & Optimize</h3>
-                <p>Receive actionable tax planning, automated budgeting, and transparent merchant payouts.</p>
+
+            <div class="goal-preview-card glass-panel">
+                <div class="goal-card-header">
+                    <h4>Emergency Reserve Milestone</h4>
+                    <span class="status-pill status-safe">30.0% Reached</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-fill fill-safe" style="width: 30%;"></div>
+                </div>
+                <div class="goal-card-meta">
+                    <span>Saved: ₹45,000</span>
+                    <span>Target: ₹1,50,000</span>
+                </div>
             </div>
         </div>
     </section>
-
-    <!-- Call to Action Section -->
-    <section class="cta-section glass-panel">
-        <h2>Ready to optimize your finances & UPI settlements?</h2>
-        <p>Join thousands of individuals and growing merchants building wealth intelligently.</p>
-        <a href="#" class="btn-primary" style="padding: 16px 32px; font-size: 1.2rem;">Get Started Now</a>
-    </section>
-
-    <script>
-        async function handleQuickPayment(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            const resultDiv = document.getElementById('sim-result');
-            btn.disabled = true;
-            btn.innerText = "Processing...";
-
-            const payload = {
-                merchant_id: "MERCHANT_001",
-                amount: parseFloat(document.getElementById('sim-amount').value),
-                customer_id: "cust_web_demo",
-                upi_id: document.getElementById('sim-upi-id').value,
-                payment_app: "google_pay",
-                psp_provider: document.getElementById('sim-psp').value
-            };
-
-            try {
-                const res = await fetch('/api/upi/initiate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                resultDiv.style.display = 'block';
-                resultDiv.innerHTML = `<span style="color: #10b981; font-weight: 600;">✓ Initiated: ${data.psp_reference_id}</span><br>Est. Fee: ₹${(data.psp_fee + data.gst_fee).toFixed(2)} | Net: ₹${data.net_amount_to_merchant.toFixed(2)}`;
-            } catch (err) {
-                resultDiv.style.display = 'block';
-                resultDiv.innerHTML = `<span style="color: #ef4444;">Error: ${err.message}</span>`;
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "Test Ingestion";
-            }
-        }
-
-        // Live KPI fetching from API if available
-        async function loadLiveKPIs() {
-            try {
-                const res = await fetch('/api/upi/kpis?merchant=MERCHANT_001');
-                if (!res.ok) return;
-                const data = await res.json();
-                if (data.total_gross_volume !== undefined) {
-                    document.getElementById('kpi-volume').innerText = '₹' + data.total_gross_volume.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                    document.getElementById('kpi-settled').innerText = '₹' + data.total_net_settled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                    document.getElementById('kpi-fees').innerText = '₹' + data.total_fees_incurred.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                    document.getElementById('kpi-pending').innerText = '₹' + data.pending_settlement_amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                }
-            } catch (e) {
-                // Keep static seed defaults
-            }
-        }
-        document.addEventListener('DOMContentLoaded', loadLiveKPIs);
-    </script>
-
 
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-columns">
             <div class="footer-col">
                 <a href="#" class="footer-logo">
-                    <img src="images/logo.png" alt="AI Financial Advisor Logo">
+                    <img src="images/logo.png" alt="FinVista AI Logo">
+                    <span class="logo-text">FinVista <span class="accent-text">AI</span></span>
                 </a>
-                <p style="color: var(--text-secondary); margin-top: 15px;">Your personal AI wealth manager.</p>
+                <p style="color: var(--text-secondary); margin-top: 15px;">Your autonomous personal AI wealth advisor and enterprise UPI settlement tracking platform.</p>
             </div>
             <div class="footer-col">
-                <h4>Product</h4>
-                <a href="#">Features</a>
-                <a href="#">Security</a>
-                <a href="#">Pricing</a>
+                <h4>Navigation</h4>
+                <a href="#hero">Home</a>
+                <a href="#ai-chat">AI Chat Advisor</a>
+                <a href="#expense-hub">Expense Hub</a>
+                <a href="#guru-wisdom">Guru Principles</a>
+                <a href="#upi-analytics">UPI Analytics</a>
             </div>
             <div class="footer-col">
-                <h4>Company</h4>
-                <a href="#">About</a>
-                <a href="#">Blog</a>
-                <a href="#">Contact</a>
+                <h4>Applications</h4>
+                <a href="http://localhost:8501" target="_blank">Streamlit Dashboard</a>
+                <a href="http://localhost:8000/docs" target="_blank">FastAPI REST Docs</a>
+                <a href="#upi-analytics">Payment Sandbox</a>
             </div>
             <div class="footer-col">
-                <h4>Legal</h4>
+                <h4>Legal & Safety</h4>
                 <a href="#">Terms of Service</a>
                 <a href="#">Privacy Policy</a>
+                <a href="#">Security Statement</a>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 AI Financial Advisor Inc. All rights reserved.</p>
+            <p>&copy; 2026 FinVista AI. Grounded in AI Agentic Financial Advisory Architecture.</p>
         </div>
     </footer>
 
-</body>
+    <!-- Interactive JS Script -->
+    <script>
+        // API Base URL
+        const API_BASE = "http://localhost:8000";
 
+        // Persona Change
+        function changePersona() {
+            const persona = document.getElementById("chat-persona-select").value;
+            document.getElementById("active-persona-title").innerText = persona;
+        }
+
+        // Quick Prompt helper
+        function sendQuickPrompt(promptText) {
+            document.getElementById("chat-user-input").value = promptText;
+            sendChatMessage();
+        }
+
+        // Chat Message Dispatch
+        async function sendChatMessage() {
+            const inputElem = document.getElementById("chat-user-input");
+            const text = inputElem.value.trim();
+            if (!text) return;
+
+            const chatMessages = document.getElementById("chat-messages");
+            const persona = document.getElementById("chat-persona-select").value;
+
+            // Render User Message
+            const userBubble = document.createElement("div");
+            userBubble.className = "chat-msg user-msg";
+            userBubble.innerHTML = `
+                <div class="msg-content">${escapeHtml(text)}</div>
+                <div class="msg-avatar"><i class="fa-solid fa-user"></i></div>
+            `;
+            chatMessages.appendChild(userBubble);
+            inputElem.value = "";
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Render Loading Spinner
+            const loadingBubble = document.createElement("div");
+            loadingBubble.className = "chat-msg assistant-msg";
+            loadingBubble.id = "chat-loading-bubble";
+            loadingBubble.innerHTML = `
+                <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-content"><i class="fa-solid fa-spinner fa-spin"></i> ${persona} is thinking and formulating response...</div>
+            `;
+            chatMessages.appendChild(loadingBubble);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const fullPrompt = `[${persona} Persona]: ` + text;
+                const response = await fetch(`${API_BASE}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: fullPrompt })
+                });
+
+                const loadingNode = document.getElementById("chat-loading-bubble");
+                if (loadingNode) loadingNode.remove();
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status} - Agent endpoint unavailable`);
+                }
+
+                const data = await response.json();
+                const assistantBubble = document.createElement("div");
+                assistantBubble.className = "chat-msg assistant-msg";
+                
+                let contentHtml = formatMarkdown(data.response);
+                if (data.chart_path) {
+                    contentHtml += `<br><img src="${data.chart_path}" alt="Generated Chart" style="max-width:100%; border-radius:8px; margin-top:10px;">`;
+                }
+
+                assistantBubble.innerHTML = `
+                    <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+                    <div class="msg-content">${contentHtml}</div>
+                `;
+                chatMessages.appendChild(assistantBubble);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            } catch (err) {
+                const loadingNode = document.getElementById("chat-loading-bubble");
+                if (loadingNode) loadingNode.remove();
+
+                const errBubble = document.createElement("div");
+                errBubble.className = "chat-msg assistant-msg";
+                errBubble.innerHTML = `
+                    <div class="msg-avatar"><i class="fa-solid fa-triangle-exclamation text-red"></i></div>
+                    <div class="msg-content" style="color: #ef4444;">
+                        <strong>Error:</strong> Could not connect to API server (${err.message}). Make sure backend FastAPI server is running on port 8000.
+                    </div>
+                `;
+                chatMessages.appendChild(errBubble);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        // Upload PDF Document Knowledge
+        async function uploadPDFKnowledge(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const statusSpan = document.getElementById("pdf-upload-status");
+            statusSpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Indexing ${file.name}...`;
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/upload/pdf`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                statusSpan.innerHTML = `<span style="color:#10b981;">✓ ${data.message || 'Indexed!'}</span>`;
+            } catch (err) {
+                statusSpan.innerHTML = `<span style="color:#ef4444;">Failed: ${err.message}</span>`;
+            }
+        }
+
+        // Live UPI Analytics Fetcher
+        async function loadLiveUPIAnalytics() {
+            try {
+                // Fetch KPIs
+                const resKpi = await fetch(`${API_BASE}/api/upi/kpis?merchant=MERCHANT_001`);
+                if (resKpi.ok) {
+                    const kpis = await resKpi.json();
+                    document.getElementById("web-kpi-gross").innerText = '₹' + kpis.total_gross_volume.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    document.getElementById("web-kpi-net").innerText = '₹' + kpis.total_net_settled.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    document.getElementById("web-kpi-fees").innerText = '₹' + kpis.total_fees_incurred.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    document.getElementById("web-kpi-pending").innerText = '₹' + kpis.pending_settlement_amount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                    document.getElementById("web-kpi-txns").innerText = kpis.total_transactions;
+                    document.getElementById("web-kpi-rate").innerText = kpis.success_rate + '%';
+                }
+
+                // Fetch Batches
+                const resBatches = await fetch(`${API_BASE}/api/settlements/summary?merchant=MERCHANT_001`);
+                if (resBatches.ok) {
+                    const batches = await resBatches.json();
+                    const tbody = document.getElementById("tbody-batches");
+                    tbody.innerHTML = "";
+                    batches.slice(0, 6).forEach(b => {
+                        const tr = document.createElement("tr");
+                        const statusClass = b.status === "settled" ? "status-safe" : "status-caution";
+                        tr.innerHTML = `
+                            <td>${b.batch_date || 'Today'}</td>
+                            <td><strong>${b.psp_provider.toUpperCase()}</strong></td>
+                            <td>${b.total_transactions}</td>
+                            <td>₹${b.total_gross.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                            <td>₹${b.total_fees.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                            <td style="color:#10b981; font-weight:600;">₹${b.total_net.toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                            <td><code>${b.utr || 'Pending UTR'}</code></td>
+                            <td><span class="status-pill ${statusClass}">${b.status.toUpperCase()}</span></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+
+                // Fetch Reconciliations
+                const resRecs = await fetch(`${API_BASE}/api/settlements/reconciliation?merchant=MERCHANT_001`);
+                if (resRecs.ok) {
+                    const recs = await resRecs.json();
+                    const tbodyRec = document.getElementById("tbody-reconciliations");
+                    tbodyRec.innerHTML = "";
+                    recs.slice(0, 5).forEach(r => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><code>${r.psp_reference_id}</code></td>
+                            <td>₹${r.amount.toFixed(2)}</td>
+                            <td>₹${r.net_amount.toFixed(2)}</td>
+                            <td>${r.batch_date}</td>
+                            <td><code>${r.utr}</code></td>
+                            <td><span class="status-pill status-safe">${r.status.toUpperCase()}</span></td>
+                            <td style="font-size:0.85rem; color:var(--text-secondary);">${r.notes}</td>
+                        `;
+                        tbodyRec.appendChild(tr);
+                    });
+                }
+
+            } catch (e) {
+                console.log("Using static data fallback for UPI analytics preview.");
+            }
+        }
+
+        // Form Submit: Payment Initiation Sandbox
+        async function handlePaymentInitiate(e) {
+            e.preventDefault();
+            const btn = document.getElementById("btn-submit-initiate");
+            const outputBox = document.getElementById("res-initiate-output");
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Initiating...`;
+
+            const payload = {
+                merchant_id: document.getElementById("sim-merchant").value,
+                amount: parseFloat(document.getElementById("sim-amt").value),
+                customer_id: "cust_web_portal",
+                upi_id: document.getElementById("sim-upi").value,
+                payment_app: document.getElementById("sim-app").value,
+                psp_provider: document.getElementById("sim-psp").value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/upi/initiate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                outputBox.style.display = "block";
+                outputBox.innerHTML = `
+                    <div style="color: #10b981; font-weight:700;">✓ Transaction Initiated!</div>
+                    <div>Ref ID: <code>${data.psp_reference_id}</code></div>
+                    <div>Gross: ₹${data.amount.toFixed(2)} | Fee+GST: ₹${(data.psp_fee + data.gst_fee).toFixed(2)}</div>
+                    <div style="font-weight:600;">Net Payout: ₹${data.net_amount_to_merchant.toFixed(2)}</div>
+                `;
+                loadLiveUPIAnalytics();
+            } catch (err) {
+                outputBox.style.display = "block";
+                outputBox.innerHTML = `<div style="color:#ef4444;">Error: ${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `🚀 Initiate Payment`;
+            }
+        }
+
+        // Form Submit: Webhook Trigger Sandbox
+        async function handleWebhookTrigger(e) {
+            e.preventDefault();
+            const btn = document.getElementById("btn-submit-webhook");
+            const outputBox = document.getElementById("res-webhook-output");
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Triggering...`;
+
+            const refId = document.getElementById("wh-ref").value;
+            const eventType = document.getElementById("wh-event").value;
+
+            const payload = {
+                event: eventType,
+                payment: {
+                    entity: {
+                        id: refId,
+                        amount: 250000,
+                        fee: 2450,
+                        tax: 441,
+                        status: eventType === "payment.captured" ? "captured" : "authorized",
+                        vpa: "customer@okhdfcbank"
+                    }
+                }
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/webhooks/razorpay`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                outputBox.style.display = "block";
+                outputBox.innerHTML = `
+                    <div style="color: #38bdf8; font-weight:700;">📡 Webhook Processed</div>
+                    <div>Status: ${data.status} | Event: ${data.event || eventType}</div>
+                `;
+                loadLiveUPIAnalytics();
+            } catch (err) {
+                outputBox.style.display = "block";
+                outputBox.innerHTML = `<div style="color:#ef4444;">Webhook Error: ${err.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `📡 Trigger Webhook Payload`;
+            }
+        }
+
+        // Helper Utilities
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function formatMarkdown(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // Initialize on load
+        document.addEventListener("DOMContentLoaded", () => {
+            loadLiveUPIAnalytics();
+        });
+    </script>
+</body>
 </html>

@@ -1,8 +1,12 @@
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import requests
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+
 from dotenv import load_dotenv
 import base64
 import finnhub
@@ -35,7 +39,11 @@ GOOGLE_DRIVE_API_KEY = os.getenv("GOOGLE_DRIVE_API_KEY")
 GMAIL_API_KEY = os.getenv("GMAIL_API_KEY")
 
 
-embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+try:
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+except Exception:
+    embeddings = None
+
 vector_store = None
 
 def init_vector_store():
@@ -396,12 +404,22 @@ def initialize_agent():
         simulate_or_record_upi_transaction
     ]
     
-    if GROQ_API_KEY:
-        llm = ChatGroq(temperature=0, model_name="llama-3.3-70b-versatile", groq_api_key=GROQ_API_KEY)
-    elif GEMINI_API_KEY:
-        llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", temperature=0, google_api_key=GEMINI_API_KEY)
-    else:
-        raise ValueError("No LLM API key provided. Set GROQ_API_KEY or GEMINI_API_KEY.")
+    llm = None
+    if GEMINI_API_KEY:
+        try:
+            llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", temperature=0, google_api_key=GEMINI_API_KEY)
+        except Exception as e:
+            print(f"Warning: Failed to initialize Gemini LLM: {e}")
+
+    if not llm and GROQ_API_KEY:
+        try:
+            llm = ChatGroq(temperature=0, model_name="llama-3.3-70b-versatile", groq_api_key=GROQ_API_KEY)
+        except Exception as e:
+            print(f"Warning: Failed to initialize Groq LLM: {e}")
+
+    if not llm:
+        raise ValueError("No working LLM available. Please check GEMINI_API_KEY in .env.")
+
 
     # Load universal knowledge from Assets
     inv_knowledge_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Assets', 'universal_knowledge.txt')
