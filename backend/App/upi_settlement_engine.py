@@ -595,6 +595,15 @@ def process_settlement_webhook(event: str, payload: dict):
         net = gross - fees
         utr = settlement.get("utr", f"UTR{datetime.date.today().strftime('%Y%m%d')}RZP{uuid.uuid4().hex[:4]}")
 
+        existing = session.query(SettlementBatch).filter(SettlementBatch.utr == utr).first()
+        if existing:
+            existing.total_gross = round(gross, 2)
+            existing.total_fees = round(fees, 2)
+            existing.total_net = round(net, 2)
+            existing.status = "settled"
+            session.commit()
+            return {"status": "success", "batch_id": existing.id, "utr": utr, "net_settled": net}
+
         batch = SettlementBatch(
             id=str(uuid.uuid4()),
             merchant_id=merchant_id,
@@ -616,6 +625,7 @@ def process_settlement_webhook(event: str, payload: dict):
         return {"status": "error", "error": str(e)}
     finally:
         session.close()
+
 
 def generate_settlement_analytics_chart(merchant_id="MERCHANT_001"):
     """

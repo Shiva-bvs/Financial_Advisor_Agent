@@ -1,10 +1,15 @@
 import streamlit as st
 import os
 import json
+import io
+import datetime
 import pandas as pd
 from PIL import Image
 import sys
+
+# Ensure backend directory is in path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from App.financial_agent import initialize_agent, add_pdf_to_knowledgebase
 from App.upi_settlement_engine import (
     get_merchant_kpi_summary,
@@ -15,9 +20,113 @@ from App.upi_settlement_engine import (
     process_razorpay_webhook,
     generate_settlement_analytics_chart
 )
+from App.expense_processor import (
+    parse_csv_expenses,
+    parse_excel_expenses,
+    parse_json_expenses,
+    parse_pdf_expenses,
+    process_receipt_ocr,
+    generate_sample_csv,
+    generate_sample_excel,
+    generate_sample_json,
+    get_guru_recommendations,
+    generate_pdf_report,
+    generate_excel_export,
+    validate_and_clean_expenses_df
+)
 
-st.set_page_config(page_title="AI Financial Advisor & UPI Analytics", layout="wide", page_icon="💰")
+# Page Config
+st.set_page_config(
+    page_title="FinVista AI - Advisory & Business Analytics",
+    layout="wide",
+    page_icon="💰",
+    initial_sidebar_state="expanded"
+)
 
+# Custom Styling
+st.markdown("""
+<style>
+    /* Metric Card Styling */
+    .metric-card {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 16px 20px;
+        color: #f8fafc;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .metric-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #38bdf8;
+    }
+    .metric-label {
+        font-size: 13px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Custom Callouts */
+    .guru-box {
+        background-color: #0f2942;
+        border-left: 4px solid #38bdf8;
+        padding: 14px 18px;
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .status-safe { color: #10b981; font-weight: bold; }
+    .status-caution { color: #f59e0b; font-weight: bold; }
+    .status-danger { color: #ef4444; font-weight: bold; }
+</style>
+""", unsafe_allow_html=True)
+
+# Session State Initialization
+if "expenses_df" not in st.session_state:
+    # Seed with initial sample expenses if empty
+    sample_bytes = generate_sample_csv()
+    parsed = parse_csv_expenses(io.BytesIO(sample_bytes))
+    st.session_state["expenses_df"] = parsed["data"]
+
+if "budgets" not in st.session_state:
+    st.session_state["budgets"] = {
+        "Groceries": 5000.0,
+        "Dining Out": 2000.0,
+        "Utilities": 4000.0,
+        "Transportation": 1500.0,
+        "Shopping": 6000.0,
+        "Entertainment": 3000.0,
+        "Savings & Investment": 20000.0
+    }
+
+if "goals" not in st.session_state:
+    st.session_state["goals"] = [
+        {
+            "name": "Emergency Reserve (6 Months)",
+            "target": 150000.0,
+            "current": 45000.0,
+            "monthly_contrib": 15000.0,
+            "target_date": "2027-03-31"
+        },
+        {
+            "name": "Vacation & Travel Fund",
+            "target": 50000.0,
+            "current": 20000.0,
+            "monthly_contrib": 5000.0,
+            "target_date": "2026-12-31"
+        }
+    ]
+
+if "monthly_income" not in st.session_state:
+    st.session_state["monthly_income"] = 100000.0
+
+if "messages" not in st.session_state:
+    st.session_state["messages"] = [
+        {"role": "assistant", "content": "Hello! I am your AI Financial Advisor & Wealth Strategist. How can I help you optimize your personal budget, tax planning, or merchant UPI transactions today?"}
+    ]
+
+# Initialize LangChain Agent
 @st.cache_resource
 def get_agent():
     return initialize_agent()
@@ -25,152 +134,528 @@ def get_agent():
 try:
     agent = get_agent()
 except Exception as e:
-    st.error(f"Failed to initialize agent: {e}")
     agent = None
 
-# Header
-st.title("💰 AI Financial Advisor & UPI Business Analytics")
-st.caption("Personalized wealth advisory grounded in financial gurus + Real-time UPI transaction & settlement tracking")
+# Sidebar Controls
+with st.sidebar:
+    st.image("https://img.icons8.com/isometric/96/money-bag-with-coins.png", width=64)
+    st.title("FinVista AI")
+    st.caption("AI Financial Advisor & UPI Analytics Platform")
+    st.divider()
 
-# Tabs
-tab_chat, tab_upi, tab_simulator = st.tabs([
-    "💬 AI Financial Advisor Chat", 
-    "💳 UPI Settlement & Transaction Analytics", 
-    "⚡ UPI Simulator & Webhooks"
+    st.subheader("👤 User Profile & Settings")
+    monthly_income = st.number_input(
+        "Monthly Income (INR ₹)",
+        min_value=10000.0,
+        max_value=10000000.0,
+        value=float(st.session_state["monthly_income"]),
+        step=5000.0
+    )
+    st.session_state["monthly_income"] = monthly_income
+
+    st.divider()
+    st.subheader("🔐 API Key Diagnostics")
+    gemini_key = os.getenv("GEMINI_API_KEY")
+    groq_key = os.getenv("GROQ_API_KEY")
+    
+    if gemini_key:
+        st.success("✅ Gemini Vision & Embeddings Active")
+    else:
+        st.warning("⚠️ Gemini Key Missing (.env)")
+        
+    if groq_key:
+        st.success("✅ Groq Fast LLM Active")
+    else:
+        st.info("ℹ️ Using Gemini LLM fallback")
+
+    st.divider()
+    st.caption("Powered by LangChain, LangGraph, Streamlit & Gemini 2.5/3.0")
+
+# Header Banner
+st.title("💰 AI Financial Advisor & Expense Intelligence Hub")
+st.markdown("Comprehensive Personal Wealth Planning, Guru Advice, Budget Tracking & Real-Time UPI Settlement Analytics")
+
+# Navigation Tabs
+tab_upload, tab_dashboard, tab_advice, tab_budget, tab_export, tab_upi = st.tabs([
+    "📤 Expense Upload Center",
+    "📊 Financial Dashboard",
+    "💡 Guru Advice & AI Chat",
+    "🎯 Budget & Goal Tracker",
+    "📥 Export & Reports",
+    "💳 UPI Settlement Analytics"
 ])
 
-# --- Tab 1: AI Chat Interface ---
-with tab_chat:
-    col_chat, col_side = st.columns([3, 1])
+# --- TAB 1: EXPENSE UPLOAD & MULTI-FORMAT PARSER ---
+with tab_upload:
+    st.header("📤 Expense Upload & Multi-Format Ingestion")
+    st.caption("Upload statements, bills, spreadsheets, or receipts. Supports CSV, Excel, JSON, PDF, and Receipt Images.")
+
+    # Format Guidance & Sample Downloads
+    with st.expander("ℹ️ Format Guidelines & Quick Sample Templates", expanded=False):
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.markdown("##### 📄 CSV Template")
+            st.download_button(
+                "📥 Download Sample CSV",
+                data=generate_sample_csv(),
+                file_name="sample_expenses.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
+        with c2:
+            st.markdown("##### 📊 Excel Template")
+            st.download_button(
+                "📥 Download Sample Excel",
+                data=generate_sample_excel(),
+                file_name="sample_expenses.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
+        with c3:
+            st.markdown("##### 📜 JSON Template")
+            st.download_button(
+                "📥 Download Sample JSON",
+                data=generate_sample_json(),
+                file_name="sample_expenses.json",
+                mime="application/json",
+                use_container_width=True
+            )
+
+    st.divider()
+
+    # Upload Container
+    col_up1, col_up2 = st.columns([2, 1])
+
+    with col_up1:
+        uploaded_file = st.file_uploader(
+            "Upload Financial Document / Expense File",
+            type=["csv", "xlsx", "xls", "json", "pdf", "png", "jpg", "jpeg", "webp"],
+            help="Upload your bank statement, expense sheet, or receipt photo."
+        )
+
+        if uploaded_file:
+            file_name = uploaded_file.name
+            file_ext = file_name.lower().split(".")[-1]
+            file_bytes = uploaded_file.getvalue()
+
+            st.info(f"Processing uploaded file: **{file_name}** ({len(file_bytes)/1024:.1f} KB)")
+
+            parsed_res = None
+            if file_ext == "csv":
+                parsed_res = parse_csv_expenses(io.BytesIO(file_bytes))
+            elif file_ext in ["xlsx", "xls"]:
+                parsed_res = parse_excel_expenses(io.BytesIO(file_bytes))
+            elif file_ext == "json":
+                parsed_res = parse_json_expenses(file_bytes)
+            elif file_ext == "pdf":
+                with st.spinner("Extracting bank statement data from PDF..."):
+                    parsed_res = parse_pdf_expenses(io.BytesIO(file_bytes))
+            elif file_ext in ["png", "jpg", "jpeg", "webp"]:
+                with st.spinner("Running Gemini Vision OCR receipt recognition..."):
+                    parsed_res = process_receipt_ocr(file_bytes, filename=file_name)
+
+            if parsed_res:
+                if parsed_res["success"]:
+                    new_df = parsed_res["data"]
+                    st.success(f"Successfully processed **{parsed_res['total_count']}** expense items!")
+                    
+                    if parsed_res.get("warnings"):
+                        for w in parsed_res["warnings"]:
+                            st.warning(f"⚠️ {w}")
+                            
+                    st.dataframe(new_df, use_container_width=True, hide_index=True)
+                    
+                    col_b1, col_b2 = st.columns(2)
+                    with col_b1:
+                        if st.button("➕ Append to Current Expenses", use_container_width=True, type="primary"):
+                            combined = pd.concat([st.session_state["expenses_df"], new_df], ignore_index=True)
+                            val = validate_and_clean_expenses_df(combined)
+                            st.session_state["expenses_df"] = val["data"]
+                            st.success(f"Appended! Total transactions now: {len(st.session_state['expenses_df'])}")
+                            st.rerun()
+                    with col_b2:
+                        if st.button("🔄 Replace Current Expenses", use_container_width=True):
+                            st.session_state["expenses_df"] = new_df
+                            st.success("Replaced existing expense dataset.")
+                            st.rerun()
+
+                else:
+                    # Show detailed error message & troubleshooting
+                    st.error("❌ Data Processing / Ingestion Failed")
+                    for err in parsed_res["errors"]:
+                        st.error(f"Error details: {err}")
+                    
+                    if parsed_res.get("troubleshooting"):
+                        st.markdown("#### 💡 Troubleshooting Steps:")
+                        for tip in parsed_res["troubleshooting"]:
+                            st.write(tip)
+
+    with col_up2:
+        st.markdown("### ✏️ Add Manual Expense")
+        with st.form("manual_expense_form"):
+            m_date = st.date_input("Transaction Date", value=datetime.date.today())
+            m_cat = st.selectbox("Category", [
+                "Groceries", "Dining Out", "Utilities", "Transportation", 
+                "Shopping", "Entertainment", "Health & Medical", "Housing & Rent",
+                "Savings & Investment", "Other"
+            ])
+            m_amt = st.number_input("Amount (INR ₹)", min_value=1.0, value=500.0, step=50.0)
+            m_desc = st.text_input("Description / Merchant", value="Coffee & Snacks")
+            m_sub = st.form_submit_button("➕ Save Expense")
+
+            if m_sub:
+                new_row = pd.DataFrame([{
+                    "date": m_date.strftime("%Y-%m-%d"),
+                    "category": m_cat,
+                    "amount": round(m_amt, 2),
+                    "description": m_desc
+                }])
+                combined = pd.concat([st.session_state["expenses_df"], new_row], ignore_index=True)
+                val = validate_and_clean_expenses_df(combined)
+                st.session_state["expenses_df"] = val["data"]
+                st.success("Added expense item!")
+                st.rerun()
+
+    st.divider()
+
+    # View Current Loaded Expenses
+    st.subheader("📋 Loaded Expense Records")
+    if not st.session_state["expenses_df"].empty:
+        st.dataframe(st.session_state["expenses_df"], use_container_width=True, hide_index=True)
+        if st.button("🗑️ Clear All Loaded Expenses"):
+            st.session_state["expenses_df"] = pd.DataFrame(columns=["date", "category", "amount", "description"])
+            st.rerun()
+    else:
+        st.info("No expense records loaded yet. Upload a file above or add a manual expense.")
+
+
+# --- TAB 2: FINANCIAL DASHBOARD & VISUALIZATIONS ---
+with tab_dashboard:
+    st.header("📊 Financial Dashboard & Spending Analytics")
+    df = st.session_state["expenses_df"]
+
+    if df.empty:
+        st.warning("No expense data loaded. Please upload your expense file in the Expense Upload tab.")
+    else:
+        # High Level Metric Cards
+        total_spend = df["amount"].sum()
+        avg_spend = df["amount"].mean()
+        txn_count = len(df)
+        income = st.session_state["monthly_income"]
+        net_savings = max(0.0, income - total_spend)
+        savings_rate = (net_savings / income * 100.0) if income > 0 else 0.0
+
+        top_cat_row = df.groupby("category")["amount"].sum().reset_index().sort_values(by="amount", ascending=False).iloc[0]
+        top_cat_name = top_cat_row["category"]
+        top_cat_amt = top_cat_row["amount"]
+
+        m1, m2, m3, m4, m5 = st.columns(5)
+        m1.metric("Total Spending", f"₹{total_spend:,.2f}")
+        m2.metric("Monthly Savings", f"₹{net_savings:,.2f}", delta=f"{savings_rate:.1f}% Savings Rate")
+        m3.metric("Avg Transaction", f"₹{avg_spend:,.2f}")
+        m4.metric("Top Category", f"{top_cat_name}", delta=f"₹{top_cat_amt:,.2f}")
+        m5.metric("Transactions", f"{txn_count}")
+
+        st.divider()
+
+        # Charts Section
+        c_left, c_right = st.columns(2)
+
+        with c_left:
+            st.subheader("🍕 Category Spending Breakdown")
+            cat_totals = df.groupby("category")["amount"].sum().reset_index()
+            st.bar_chart(cat_totals, x="category", y="amount", use_container_width=True)
+
+        with c_right:
+            st.subheader("📈 Daily Spending Trend")
+            daily_totals = df.groupby("date")["amount"].sum().reset_index().sort_values("date")
+            st.line_chart(daily_totals, x="date", y="amount", use_container_width=True)
+
+        st.divider()
+
+        # National Benchmark Comparison
+        st.subheader("⚖️ Your Category Allocation vs. Indian National Benchmarks (HCES 2023-24)")
+        national_benchmarks = {
+            "Groceries": 35.0,
+            "Housing & Rent": 20.0,
+            "Utilities": 10.0,
+            "Transportation": 12.0,
+            "Dining Out": 8.0,
+            "Healthcare": 7.0,
+            "Entertainment": 8.0
+        }
+
+        user_cat_pct = {}
+        for cat, amt in cat_totals.values:
+            user_cat_pct[cat] = round((amt / total_spend * 100.0), 1)
+
+        bench_rows = []
+        all_cats = set(national_benchmarks.keys()).union(user_cat_pct.keys())
+        for cat in all_cats:
+            u_pct = user_cat_pct.get(cat, 0.0)
+            n_pct = national_benchmarks.get(cat, 5.0)
+            diff = u_pct - n_pct
+            status = "Above Avg" if diff > 2.0 else ("Below Avg" if diff < -2.0 else "In Line")
+            bench_rows.append({
+                "Category": cat,
+                "Your Share (%)": f"{u_pct:.1f}%",
+                "National Benchmark (%)": f"{n_pct:.1f}%",
+                "Variance": f"{diff:+.1f}%",
+                "Status": status
+            })
+
+        st.dataframe(pd.DataFrame(bench_rows), use_container_width=True, hide_index=True)
+
+        st.divider()
+
+        # Interactive Expense Explorer Table
+        st.subheader("🔍 Expense Explorer & Filter Tool")
+        f_col1, f_col2 = st.columns(2)
+        with f_col1:
+            search_query = st.text_input("Search description or merchant", value="")
+        with f_col2:
+            sel_cat = st.multiselect("Filter by Category", options=df["category"].unique(), default=list(df["category"].unique()))
+
+        filtered_df = df[df["category"].isin(sel_cat)]
+        if search_query:
+            filtered_df = filtered_df[filtered_df["description"].str.contains(search_query, case=False, na=False)]
+
+        st.dataframe(filtered_df, use_container_width=True, hide_index=True)
+
+
+# --- TAB 3: GURU ADVICE & AI CHAT ---
+with tab_advice:
+    st.header("💡 Financial Guru Principles & AI Advisory")
+    st.caption("Actionable recommendations grounded in legendary financial principles + Interactive AI Advisor.")
+
+    df = st.session_state["expenses_df"]
+    income = st.session_state["monthly_income"]
+    advice_data = get_guru_recommendations(df, income)
+
+    st.subheader("🧠 Automated Guru Insights for Your Profile")
     
-    with col_side:
-        st.subheader("📁 Data Integrations")
-        
-        with st.expander("1. Guru Advice (PDF)", expanded=False):
-            pdf_file = st.file_uploader("Upload book/article", type=["pdf"], key="chat_pdf")
-            if pdf_file:
-                temp_pdf_path = os.path.join(os.path.dirname(__file__), "Assets", "temp_uploaded.pdf")
-                os.makedirs(os.path.dirname(temp_pdf_path), exist_ok=True)
-                with open(temp_pdf_path, "wb") as f:
-                    f.write(pdf_file.getbuffer())
-                with st.spinner("Indexing PDF..."):
-                    res = add_pdf_to_knowledgebase(temp_pdf_path)
-                    st.success(res)
+    g_tabs = st.tabs(["Warren Buffett", "Dave Ramsey", "Ramit Sethi", "Morgan Housel", "Benjamin Graham"])
+    
+    with g_tabs[0]:
+        st.markdown("#### 📈 Warren Buffett: Value & Long-Term Compounding")
+        for line in advice_data["gurus"]["Warren Buffett"]:
+            st.markdown(f"- {line}")
 
-        with st.expander("2. Spending Data (CSV)", expanded=False):
-            csv_file = st.file_uploader("Upload expenses CSV", type=["csv"], key="chat_csv")
-            if csv_file:
-                try:
-                    df = pd.read_csv(csv_file)
-                    st.write("Preview:", df.head(2))
-                    if st.button("Analyze CSV Expenses", key="btn_csv_exp"):
-                        expenses_json = df.to_json(orient="records")
-                        prompt = f"Analyze these expenses and compare with national patterns: {expenses_json}"
-                        if "messages" not in st.session_state:
-                            st.session_state.messages = []
-                        st.session_state.messages.append({"role": "user", "content": prompt})
-                        st.rerun()
-                except Exception as e:
-                    st.error(f"CSV Error: {e}")
+    with g_tabs[1]:
+        st.markdown("#### 🎯 Dave Ramsey: Baby Steps & Financial Peace")
+        for line in advice_data["gurus"]["Dave Ramsey"]:
+            st.markdown(f"- {line}")
 
-        with st.expander("3. OCR Screenshot / Receipt", expanded=False):
-            img_file = st.file_uploader("Upload receipt image", type=["png", "jpg", "jpeg"], key="chat_img")
-            if img_file:
-                image = Image.open(img_file)
-                st.image(image, caption="Uploaded Image", use_container_width=True)
-                temp_img_path = os.path.join(os.path.dirname(__file__), "Assets", "uploaded_screenshot.png")
-                os.makedirs(os.path.dirname(temp_img_path), exist_ok=True)
-                image.save(temp_img_path)
-                if st.button("Extract & Generate Report", key="btn_img_exp"):
-                    prompt = "Generate a comprehensive financial report from my uploaded document and uploaded_screenshot.png."
-                    if "messages" not in st.session_state:
-                        st.session_state.messages = []
-                    st.session_state.messages.append({"role": "user", "content": prompt})
+    with g_tabs[2]:
+        st.markdown("#### 💳 Ramit Sethi: Conscious Spending Plan")
+        for line in advice_data["gurus"]["Ramit Sethi"]:
+            st.markdown(f"- {line}")
+
+    with g_tabs[3]:
+        st.markdown("#### 🧘 Morgan Housel: Psychology of Money")
+        for line in advice_data["gurus"]["Morgan Housel"]:
+            st.markdown(f"- {line}")
+
+    with g_tabs[4]:
+        st.markdown("#### 🛡️ Benjamin Graham: Intelligent & Defensive Investor")
+        for line in advice_data["gurus"]["Benjamin Graham"]:
+            st.markdown(f"- {line}")
+
+    st.divider()
+
+    # Interactive AI Advisor Chat
+    st.subheader("💬 Chat with AI Advisor")
+    
+    col_persona, col_space = st.columns([1, 2])
+    with col_persona:
+        persona = st.selectbox(
+            "Choose Advisor Persona",
+            ["Wealth & Tax Strategist", "Warren Buffett (Value)", "Dave Ramsey (Debt Free)", "Ramit Sethi (Conscious Spend)"]
+        )
+
+    for msg in st.session_state["messages"]:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
+
+    if prompt := st.chat_input("Ask about tax rules (Old vs New), SIPs, debt clearance, or budget allocation..."):
+        st.session_state["messages"].append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+    if st.session_state["messages"] and st.session_state["messages"][-1]["role"] == "user":
+        if not agent:
+            st.error("Agent is not initialized. Check API keys in .env.")
+        else:
+            with st.chat_message("assistant"):
+                with st.spinner(f"{persona} is formulating financial advice..."):
+                    context_prompt = f"[{persona} Persona]: " + st.session_state["messages"][-1]["content"]
+                    inputs = {"messages": [("user", context_prompt)]}
+                    
+                    final_response = ""
+                    for s in agent.stream(inputs, stream_mode="values"):
+                        message = s["messages"][-1]
+                        if message.type == "ai" and message.content:
+                            final_response = message.content
+                    
+                    st.markdown(final_response)
+                    st.session_state["messages"].append({"role": "assistant", "content": final_response})
+
+
+# --- TAB 4: BUDGET & GOAL TRACKER ---
+with tab_budget:
+    st.header("🎯 Budget Tracking & Goal Monitoring")
+    df = st.session_state["expenses_df"]
+
+    col_b_main, col_g_main = st.columns(2)
+
+    with col_b_main:
+        st.subheader("📊 Category Budget Tracker")
+        st.caption("Set target budgets and monitor real-time monthly progress.")
+
+        new_budgets = {}
+        cat_spent_map = df.groupby("category")["amount"].sum().to_dict() if not df.empty else {}
+
+        for cat, target in st.session_state["budgets"].items():
+            spent = cat_spent_map.get(cat, 0.0)
+            pct = (spent / target * 100.0) if target > 0 else 0.0
+
+            st.markdown(f"**{cat}** (Target: ₹{target:,.0f} | Spent: ₹{spent:,.2f})")
+            
+            # Progress bar color logic
+            if pct < 80:
+                st.progress(min(1.0, spent/target))
+                st.caption(f"🟩 Safe ({pct:.1f}% used)")
+            elif pct <= 100:
+                st.progress(min(1.0, spent/target))
+                st.caption(f"🟨 Caution ({pct:.1f}% used)")
+            else:
+                st.progress(1.0)
+                st.caption(f"🟥 OVER BUDGET! ({pct:.1f}% used - Exceeded by ₹{spent - target:,.2f})")
+
+            updated_target = st.number_input(f"Edit target for {cat}", min_value=100.0, value=float(target), step=500.0, key=f"b_{cat}")
+            new_budgets[cat] = updated_target
+            st.write("---")
+
+        st.session_state["budgets"] = new_budgets
+
+    with col_g_main:
+        st.subheader("🏆 Financial Goals Progress")
+        st.caption("Track progress towards your wealth milestones.")
+
+        for i, goal in enumerate(st.session_state["goals"]):
+            g_name = goal["name"]
+            g_target = goal["target"]
+            g_curr = goal["current"]
+            g_monthly = goal["monthly_contrib"]
+            g_date = goal["target_date"]
+            g_pct = (g_curr / g_target * 100.0) if g_target > 0 else 0.0
+
+            st.markdown(f"#### 🎯 {g_name}")
+            st.markdown(f"**Target:** ₹{g_target:,.2f} | **Saved:** ₹{g_curr:,.2f} (**{g_pct:.1f}%**)")
+            st.progress(min(1.0, g_curr / g_target))
+            
+            months_left = max(1.0, (g_target - g_curr) / g_monthly) if g_monthly > 0 else 99
+            st.caption(f"Est. completion in **{months_left:.1f} months** at ₹{g_monthly:,.0f}/mo contribution.")
+            st.write("---")
+
+        # Form to add new financial goal
+        with st.expander("➕ Add New Financial Goal"):
+            with st.form("add_goal_form"):
+                ng_name = st.text_input("Goal Name", value="New Car Fund")
+                ng_target = st.number_input("Target Amount (INR ₹)", min_value=1000.0, value=300000.0, step=10000.0)
+                ng_curr = st.number_input("Current Saved (INR ₹)", min_value=0.0, value=50000.0, step=5000.0)
+                ng_monthly = st.number_input("Monthly Contribution (INR ₹)", min_value=500.0, value=10000.0, step=1000.0)
+                ng_date = st.date_input("Target Date", value=datetime.date(2027, 12, 31))
+                ng_sub = st.form_submit_button("🚀 Add Goal")
+
+                if ng_sub:
+                    st.session_state["goals"].append({
+                        "name": ng_name,
+                        "target": ng_target,
+                        "current": ng_curr,
+                        "monthly_contrib": ng_monthly,
+                        "target_date": ng_date.strftime("%Y-%m-%d")
+                    })
+                    st.success(f"Added goal: {ng_name}!")
                     st.rerun()
 
-        with st.expander("4. Quick Prompts", expanded=True):
-            if st.button("📊 Analyze UPI Settlements", use_container_width=True):
-                prompt = "Please analyze my UPI transaction volume, fee breakdown, and settlement health for MERCHANT_001."
-                if "messages" not in st.session_state:
-                    st.session_state.messages = []
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                st.rerun()
 
-            if st.button("🏦 Check Bank UTRs & Batches", use_container_width=True):
-                prompt = "Check all bank settlement batches, UTR references, and reconciliation status for MERCHANT_001."
-                if "messages" not in st.session_state:
-                    st.session_state.messages = []
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                st.rerun()
+# --- TAB 5: EXPORT & REPORTS ---
+with tab_export:
+    st.header("📥 Export & Report Generator")
+    st.caption("Generate downloadable financial reports, budget plans, and data exports.")
 
-            if st.button("📑 Old vs New Tax Regime", use_container_width=True):
-                prompt = "Explain whether Old or New Tax Regime is better for an annual salary of ₹15 Lakh with ₹1.5 Lakh 80C and ₹50k NPS."
-                if "messages" not in st.session_state:
-                    st.session_state.messages = []
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                st.rerun()
+    df = st.session_state["expenses_df"]
+    income = st.session_state["monthly_income"]
+    budgets = st.session_state["budgets"]
+    goals = st.session_state["goals"]
 
-            if st.button("👥 Fetch Splitwise Mock", use_container_width=True):
-                prompt = "Fetch my recent Splitwise expenses and analyze my spending patterns."
-                if "messages" not in st.session_state:
-                    st.session_state.messages = []
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                st.rerun()
+    ex_col1, ex_col2, ex_col3, ex_col4 = st.columns(4)
 
-    with col_chat:
-        # Chat history container
-        if "messages" not in st.session_state:
-            st.session_state.messages = [
-                {"role": "assistant", "content": "Hello! I am your AI Financial Advisor and UPI Business Analytics Assistant. How can I assist you with your personal wealth, tax planning, or merchant UPI settlements today?"}
-            ]
+    with ex_col1:
+        st.markdown("### 📄 PDF Financial Report")
+        st.caption("Executive PDF summary with metrics, category breakdown & guru advice.")
+        pdf_bytes = generate_pdf_report(df, budgets, goals, income)
+        st.download_button(
+            "📥 Download PDF Report",
+            data=pdf_bytes,
+            file_name=f"financial_report_{datetime.date.today().strftime('%Y%m%d')}.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+            type="primary"
+        )
 
-        for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
+    with ex_col2:
+        st.markdown("### 📊 Excel Master Workbook")
+        st.caption("Multi-tab Excel workbook with Transactions, Summary, Budgets & Goals.")
+        excel_bytes = generate_excel_export(df, budgets, goals)
+        st.download_button(
+            "📥 Download Excel (.xlsx)",
+            data=excel_bytes,
+            file_name=f"financial_master_{datetime.date.today().strftime('%Y%m%d')}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True
+        )
 
-        if prompt := st.chat_input("Ask about personal finance, tax rules, or UPI settlement analytics..."):
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with st.chat_message("user"):
-                st.markdown(prompt)
+    with ex_col3:
+        st.markdown("### 📄 CSV Expense Log")
+        st.caption("Clean CSV log of all recorded expenses.")
+        csv_data = df.to_csv(index=False).encode("utf-8") if not df.empty else b""
+        st.download_button(
+            "📥 Download CSV",
+            data=csv_data,
+            file_name=f"expenses_log_{datetime.date.today().strftime('%Y%m%d')}.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
 
-        if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
-            if not agent:
-                st.error("Agent is not initialized. Please verify API keys in .env.")
-            else:
-                with st.chat_message("assistant"):
-                    with st.spinner("Analyzing financial data and formulating advisory..."):
-                        langchain_messages = []
-                        for msg in st.session_state.messages:
-                            langchain_messages.append((msg["role"], msg["content"]))
-                        
-                        inputs = {"messages": langchain_messages}
-                        response_placeholder = st.empty()
-                        
-                        final_response = ""
-                        for s in agent.stream(inputs, stream_mode="values"):
-                            message = s["messages"][-1]
-                            if message.type == "ai" and message.content:
-                                final_response = message.content
-                        
-                        response_placeholder.markdown(final_response)
-                        st.session_state.messages.append({"role": "assistant", "content": final_response})
-                        
-                        # Show spending chart if generated
-                        spending_chart = os.path.join(os.path.dirname(__file__), "Assets", "spending_chart.png")
-                        if os.path.exists(spending_chart) and "spending_chart.png" in final_response:
-                            st.image(spending_chart, caption="Spending Analysis by Category", use_container_width=True)
+    with ex_col4:
+        st.markdown("### 📜 JSON Data Export")
+        st.caption("Structured JSON dataset of expenses, budgets & goals.")
+        json_obj = {
+            "expenses": df.to_dict(orient="records") if not df.empty else [],
+            "budgets": budgets,
+            "goals": goals,
+            "income": income
+        }
+        st.download_button(
+            "📥 Download JSON",
+            data=json.dumps(json_obj, indent=2),
+            file_name=f"financial_backup_{datetime.date.today().strftime('%Y%m%d')}.json",
+            mime="application/json",
+            use_container_width=True
+        )
 
-                        # Show settlement trend chart if generated
-                        settlement_chart = os.path.join(os.path.dirname(__file__), "Assets", "settlement_trend.png")
-                        if os.path.exists(settlement_chart) and "settlement_trend.png" in final_response:
-                            st.image(settlement_chart, caption="7-Day UPI Settlement & Payout Trend", use_container_width=True)
 
-# --- Tab 2: UPI Analytics & Settlement Tracker Dashboard ---
+# --- TAB 6: UPI SETTLEMENT ANALYTICS & SANDBOX ---
 with tab_upi:
+    st.header("💳 UPI Business Analytics & Settlement Tracker")
+    st.caption("Real-time UPI transaction tracking, fee reconciliation, bank UTR audits & payment sandbox.")
+
     merchant_id = st.selectbox("Select Merchant Account", ["MERCHANT_001"], index=0)
     kpis = get_merchant_kpi_summary(merchant_id)
     
-    st.subheader("📈 High-Level Merchant Metrics")
+    st.subheader("📈 Merchant Performance KPIs")
     m1, m2, m3, m4, m5, m6 = st.columns(6)
     m1.metric("Total Transactions", kpis["total_transactions"])
     m2.metric("Successfully Settled", kpis["success_count"])
@@ -182,12 +667,12 @@ with tab_upi:
     st.divider()
 
     # 7-Day Settlement Trend Chart
-    st.subheader("📊 7-Day Settlement Trend (Gross vs. Fees vs. Net)")
+    st.subheader("📊 7-Day Settlement Trend (Gross vs. Fees vs. Net Payout)")
     chart_path = generate_settlement_analytics_chart(merchant_id)
     if chart_path and os.path.exists(chart_path):
         st.image(chart_path, use_container_width=True)
 
-    # Fee Breakdown & App Distribution
+    # PSP Fee Breakdown & App Distribution
     col_psp, col_app = st.columns(2)
     with col_psp:
         st.subheader("💳 Processing Fees & Volume by PSP")
@@ -228,24 +713,12 @@ with tab_upi:
         df_recs.columns = ['Payment Ref', 'Gross (₹)', 'Net (₹)', 'Batch Date', 'Bank UTR', 'Reconciliation', 'Variance (₹)', 'Audit Notes']
         st.dataframe(df_recs, use_container_width=True, hide_index=True)
 
-    # Recent Transactions Table
-    st.subheader("📋 Recent UPI Transactions")
-    status_filter = st.selectbox("Filter by Status", ["all", "success", "pending", "failed"], index=0)
-    txns = get_transaction_analytics(merchant_id=merchant_id, status=status_filter)
-    if txns:
-        df_txns = pd.DataFrame(txns[:25])
-        df_txns = df_txns[['psp_reference_id', 'upi_id', 'amount', 'payment_app', 'psp_provider', 'status', 'cleared_by_npci_at', 'net_amount_to_merchant']]
-        df_txns.columns = ['Reference ID', 'Customer UPI VPA', 'Amount (₹)', 'Payment App', 'PSP', 'Status', 'Cleared by NPCI', 'Net Payout (₹)']
-        st.dataframe(df_txns, use_container_width=True, hide_index=True)
+    st.divider()
 
-
-# --- Tab 3: UPI Simulator & Webhook Event Trigger ---
-with tab_simulator:
+    # UPI Simulator Sandbox
     st.subheader("⚡ UPI Payment Initiation & Webhook Sandbox")
-    st.caption("Test the end-to-end payment lifecycle: Initiation → Customer Authorization → NPCI Clearance → Aggregator Webhook → Settlement Batch Reconciliation.")
-    
     col_sim1, col_sim2 = st.columns(2)
-    
+
     with col_sim1:
         st.markdown("### 1. Initiate New UPI Transaction")
         with st.form("sim_payment_form"):
@@ -264,15 +737,15 @@ with tab_simulator:
     with col_sim2:
         st.markdown("### 2. Simulate PSP Webhook Event")
         with st.form("sim_webhook_form"):
-            wh_ref = st.text_input("PSP Reference ID (from initiated txn)", value="pay_raz_sample_123")
+            wh_ref = st.text_input("PSP Reference ID", value="pay_raz_sample_123")
             wh_event = st.selectbox("Webhook Event", [
                 "payment.captured", 
                 "payment.authorized", 
                 "payment.failed", 
                 "refund.processed"
             ])
-            wh_amount = st.number_input("Payload Amount (in Paise)", value=150000, step=1000)
-            wh_error = st.text_input("Error Reason (for failed event)", value="Customer entered incorrect UPI PIN")
+            wh_amount = st.number_input("Payload Amount (Paise)", value=150000, step=1000)
+            wh_error = st.text_input("Error Reason (if failed)", value="Customer entered incorrect UPI PIN")
             wh_submit = st.form_submit_button("📡 Trigger Webhook Delivery")
             
             if wh_submit:
