@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 import shutil
+import io
+import pandas as pd
 from fastapi.staticfiles import StaticFiles
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -235,6 +237,196 @@ async def razorpay_settlement_webhook(payload: dict):
         event = payload.get("event", "settlement.processed")
         res = process_settlement_webhook(event, payload)
         return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+from App.guru_wealth_engine import generate_ai_guru_wealth_plan, calculate_portfolio_allocation
+from App.expense_processor import (
+    parse_sms_transaction_text,
+    parse_splitwise_expenses,
+    calculate_indian_income_tax,
+    parse_csv_expenses,
+    parse_excel_expenses,
+    parse_json_expenses,
+    parse_pdf_expenses,
+    process_receipt_ocr,
+    validate_and_clean_expenses_df
+)
+
+class WealthPlanRequest(BaseModel):
+    monthly_income: float = 100000.0
+    monthly_expenses: float = 45000.0
+    current_savings: float = 150000.0
+    existing_debts: float = 0.0
+    risk_profile: str = "Moderate"
+    investment_horizon: str = "7+ Years (Long Term)"
+    primary_goal: str = "Wealth Creation & Compounding"
+    preferred_philosophy: str = "Comprehensive Multi-Guru Synthesis"
+
+@app.post("/api/guru/generate-wealth-plan")
+async def api_generate_wealth_plan(req: WealthPlanRequest):
+    try:
+        plan = generate_ai_guru_wealth_plan(
+            monthly_income=req.monthly_income,
+            monthly_expenses=req.monthly_expenses,
+            current_savings=req.current_savings,
+            existing_debts=req.existing_debts,
+            risk_profile=req.risk_profile,
+            investment_horizon=req.investment_horizon,
+            primary_goal=req.primary_goal,
+            preferred_philosophy=req.preferred_philosophy
+        )
+        return plan
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# --- Comprehensive Expense & Tax APIs ---
+
+class SMSParseRequest(BaseModel):
+    sms_text: str
+
+@app.post("/api/expenses/parse-sms")
+async def api_parse_sms(req: SMSParseRequest):
+    try:
+        res = parse_sms_transaction_text(req.sms_text)
+        records = res["data"].to_dict(orient="records") if isinstance(res.get("data"), pd.DataFrame) else []
+        total_amt = float(res["data"]["amount"].sum()) if isinstance(res.get("data"), pd.DataFrame) and not res["data"].empty else 0.0
+        return {
+            "success": res.get("success", True),
+            "count": len(records),
+            "total_amount": total_amt,
+            "transactions": records,
+            "warnings": res.get("warnings", [])
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class SplitwiseParseRequest(BaseModel):
+    splitwise_text: str
+
+@app.post("/api/expenses/parse-splitwise")
+async def api_parse_splitwise(req: SplitwiseParseRequest):
+    try:
+        res = parse_splitwise_expenses(req.splitwise_text)
+        records = res["data"].to_dict(orient="records") if isinstance(res.get("data"), pd.DataFrame) else []
+        total_amt = float(res["data"]["amount"].sum()) if isinstance(res.get("data"), pd.DataFrame) and not res["data"].empty else 0.0
+        return {
+            "success": res.get("success", True),
+            "count": len(records),
+            "total_amount": total_amt,
+            "expenses": records,
+            "warnings": res.get("warnings", [])
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class TaxCalcRequest(BaseModel):
+    annual_salary: float = 1200000.0
+    other_income: float = 0.0
+    sec_80c: float = 150000.0
+    sec_80d: float = 25000.0
+    sec_80ccd_nps: float = 50000.0
+    hra_exemption: float = 0.0
+    home_loan_interest: float = 0.0
+
+@app.post("/api/tax/calculate")
+async def api_calculate_tax(req: TaxCalcRequest):
+    try:
+        total_income = req.annual_salary + req.other_income
+        total_hra_home = req.hra_exemption + req.home_loan_interest
+        tax_res = calculate_indian_income_tax(
+            annual_income=total_income,
+            deductions_80c=req.sec_80c,
+            deductions_80d=req.sec_80d,
+            nps_80ccd=req.sec_80ccd_nps,
+            hra_or_home_loan=total_hra_home
+        )
+        return tax_res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class SIPCalcRequest(BaseModel):
+    monthly_sip: float = 10000.0
+    expected_return_pct: float = 12.0
+    years: int = 10
+
+@app.post("/api/sip/calculate")
+async def api_calculate_sip(req: SIPCalcRequest):
+    try:
+        p = req.monthly_sip
+        i = (req.expected_return_pct / 100.0) / 12.0
+        n = req.years * 12
+        if i > 0:
+            maturity = p * (((1.0 + i) ** n - 1.0) / i) * (1.0 + i)
+        else:
+            maturity = p * n
+        total_invested = p * n
+        wealth_gain = max(0.0, maturity - total_invested)
+        
+        yearly_progression = []
+        for yr in range(1, req.years + 1):
+            n_months = yr * 12
+            inv = p * n_months
+            if i > 0:
+                mat = p * (((1.0 + i) ** n_months - 1.0) / i) * (1.0 + i)
+            else:
+                mat = inv
+            yearly_progression.append({
+                "year": yr,
+                "invested": round(inv, 2),
+                "wealth_gain": round(max(0.0, mat - inv), 2),
+                "maturity_value": round(mat, 2)
+            })
+
+        return {
+            "monthly_sip": req.monthly_sip,
+            "expected_return_pct": req.expected_return_pct,
+            "years": req.years,
+            "total_invested": round(total_invested, 2),
+            "wealth_gain": round(wealth_gain, 2),
+            "maturity_value": round(maturity, 2),
+            "progression": yearly_progression
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/expenses/upload-file")
+async def api_upload_expenses_file(file: UploadFile = File(...)):
+    try:
+        content = await file.read()
+        fname = file.filename.lower()
+        if fname.endswith(".csv"):
+            df = parse_csv_expenses(io.BytesIO(content))
+        elif fname.endswith(".xlsx") or fname.endswith(".xls"):
+            df = parse_excel_expenses(io.BytesIO(content))
+        elif fname.endswith(".json"):
+            df = parse_json_expenses(io.BytesIO(content))
+        elif fname.endswith(".pdf"):
+            df = parse_pdf_expenses(io.BytesIO(content))
+        elif any(fname.endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".webp"]):
+            df = process_receipt_ocr(content)
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported file format")
+
+        res = validate_and_clean_expenses_df(df)
+        clean_df = res["data"]
+        records = clean_df.to_dict(orient="records")
+        total_amt = float(clean_df["amount"].sum()) if not clean_df.empty else 0.0
+        
+        category_breakdown = {}
+        if not clean_df.empty and "category" in clean_df.columns:
+            cat_sum = clean_df.groupby("category")["amount"].sum()
+            category_breakdown = {k: float(v) for k, v in cat_sum.items()}
+
+        return {
+            "filename": file.filename,
+            "success": res["success"],
+            "count": len(records),
+            "total_amount": total_amt,
+            "category_breakdown": category_breakdown,
+            "transactions": records,
+            "warnings": res.get("warnings", [])
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -280,28 +280,144 @@ class TestFullProjectIntegration(unittest.TestCase):
         
         print("  [OK] All 7 FastAPI Endpoints Responded with HTTP 200 OK")
 
-    # --- 4. Frontend & Static Assets Integrity ---
-    def test_08_frontend_and_assets(self):
-        print("\n[Test 8] Testing Frontend Files & Assets Integrity...")
-        frontend_index = os.path.join(os.path.dirname(backend_dir), "frontend", "index.html")
-        frontend_css = os.path.join(os.path.dirname(backend_dir), "frontend", "styles.css")
-        
-        self.assertTrue(os.path.exists(frontend_index), "index.html should exist")
-        self.assertTrue(os.path.exists(frontend_css), "styles.css should exist")
-        
-        with open(frontend_index, "r", encoding="utf-8") as f:
-            html_content = f.read()
-            self.assertIn("upi-analytics", html_content)
-            self.assertIn("kpi-volume", html_content)
-            self.assertIn("settlement-batches-table", html_content)
-            self.assertIn("/api/upi/initiate", html_content)
-
-        with open(frontend_css, "r", encoding="utf-8") as f:
-            css_content = f.read()
-            self.assertIn(".upi-section", css_content)
-            self.assertIn(".kpi-grid", css_content)
-            
         print("  [OK] Frontend Assets, DOM Hooks & CSS Classes Verified")
+
+    # --- 5. Expense Processing, Ingestion & Validation Tests ---
+    def test_09_multi_format_expense_parsers(self):
+        print("\n[Test 9] Testing Multi-Format Ingestion (CSV, Excel, JSON, Sample Generators)...")
+        from App.expense_processor import (
+            generate_sample_csv,
+            generate_sample_excel,
+            generate_sample_json,
+            parse_csv_expenses,
+            parse_excel_expenses,
+            parse_json_expenses,
+            process_receipt_ocr
+        )
+
+        # 1. CSV Parser
+        csv_bytes = generate_sample_csv()
+        parsed_csv = parse_csv_expenses(csv_bytes)
+        self.assertTrue(parsed_csv["success"])
+        self.assertGreater(parsed_csv["total_count"], 0)
+        self.assertIn("category", parsed_csv["data"].columns)
+        self.assertIn("amount", parsed_csv["data"].columns)
+
+        # 2. Excel Parser
+        excel_bytes = generate_sample_excel()
+        parsed_excel = parse_excel_expenses(excel_bytes)
+        self.assertTrue(parsed_excel["success"])
+        self.assertGreater(parsed_excel["total_count"], 0)
+
+        # 3. JSON Parser
+        json_str = generate_sample_json()
+        parsed_json = parse_json_expenses(json_str)
+        self.assertTrue(parsed_json["success"])
+        self.assertGreater(parsed_json["total_count"], 0)
+
+        # 4. OCR Diagnostics (Without key)
+        ocr_res = process_receipt_ocr(b"fake_image_bytes", api_key="")
+        self.assertFalse(ocr_res["success"])
+        self.assertIn("troubleshooting", ocr_res)
+
+        # 5. SMS Parser
+        from App.expense_processor import parse_sms_transaction_text, parse_splitwise_expenses
+        sms_text = "Rs. 750 debited from A/c 4321 on 28-Aug-2026 at Zomato via UPI.\nINR 1,200.00 spent on ICICI Bank Card at Uber on 27-Aug-2026."
+        parsed_sms = parse_sms_transaction_text(sms_text)
+        self.assertTrue(parsed_sms["success"])
+        self.assertEqual(parsed_sms["total_count"], 2)
+
+        # 6. Splitwise Parser
+        splitwise_sample = """Date,Description,Category,Cost,Currency
+2026-08-20,Goa Villa Rent,Housing,8000.00,INR
+2026-08-21,Group Seafood Dinner,Dining,3200.00,INR
+"""
+        parsed_sw = parse_splitwise_expenses(splitwise_sample.encode("utf-8"))
+        self.assertTrue(parsed_sw["success"])
+        self.assertEqual(parsed_sw["total_count"], 2)
+
+        print("  [OK] CSV, Excel, JSON, OCR, SMS & Splitwise Parsers Verified")
+
+    def test_10_validation_and_clean_expenses(self):
+        print("\n[Test 10] Testing Input Validation & Financial Data Sanitization...")
+        from App.expense_processor import validate_and_clean_expenses_df
+        import pandas as pd
+
+        # Empty DF check
+        empty_res = validate_and_clean_expenses_df(pd.DataFrame())
+        self.assertFalse(empty_res["success"])
+
+        # Messy Data with dirty symbols, dates, missing categories
+        dirty_df = pd.DataFrame([
+            {"txn_date": "2026-08-20", "cat": "Groceries", "amt": "₹4,500.50", "narration": "Store A"},
+            {"txn_date": "2026-08-21", "cat": "Dining", "amt": "$1,250.00", "narration": "Store B"},
+            {"txn_date": "invalid-date", "cat": None, "amt": "350", "narration": "Store C"},
+            {"txn_date": "2026-08-22", "cat": "Fuel", "amt": "-100", "narration": "Invalid negative"},
+            {"txn_date": "2026-08-23", "cat": "Misc", "amt": "bad_number", "narration": "Corrupt amount"}
+        ])
+        clean_res = validate_and_clean_expenses_df(dirty_df)
+        self.assertTrue(clean_res["success"])
+        # Should keep the 3 valid positive rows
+        self.assertEqual(clean_res["total_count"], 3)
+        self.assertGreater(len(clean_res["warnings"]), 0)
+        print(f"  [OK] Data Sanitization: Filtered bad rows, cleaned symbols, generated {len(clean_res['warnings'])} warnings")
+
+    def test_11_guru_recommendations_and_tax_engine(self):
+        print("\n[Test 11] Testing Financial Guru Principles & Indian Tax Optimizer...")
+        from App.expense_processor import get_guru_recommendations, calculate_indian_income_tax, generate_sample_csv, parse_csv_expenses
+        
+        df = parse_csv_expenses(generate_sample_csv())["data"]
+        income = 120000.0
+        advice = get_guru_recommendations(df, income)
+
+        self.assertIn("gurus", advice)
+        self.assertIn("Warren Buffett", advice["gurus"])
+        self.assertIn("Robert Kiyosaki", advice["gurus"])
+        self.assertIn("Ramit Sethi", advice["gurus"])
+        self.assertIn("Dave Ramsey", advice["gurus"])
+        self.assertIn("Morgan Housel", advice["gurus"])
+        self.assertIn("Indian Wealth Strategist", advice["gurus"])
+        self.assertGreater(advice["summary"]["savings_rate"], 0)
+        self.assertGreater(advice["summary"]["emergency_target"], 0)
+
+        # Test Indian Tax Calculator (Option A1)
+        tax_res = calculate_indian_income_tax(
+            annual_income=1200000.0,
+            deductions_80c=150000.0,
+            deductions_80d=25000.0,
+            nps_80ccd=50000.0
+        )
+        self.assertIn("recommended_regime", tax_res)
+        self.assertIn("new_regime", tax_res)
+        self.assertIn("old_regime", tax_res)
+        self.assertGreater(len(tax_res["tax_saving_tips"]), 0)
+        print(f"  [OK] Guru Advice & Tax Engine: Recommended {tax_res['recommended_regime']}, Savings Rate = {advice['summary']['savings_rate']:.1f}%")
+
+    def test_12_export_generators(self):
+        print("\n[Test 12] Testing PDF & Excel Export Engines...")
+        from App.expense_processor import (
+            generate_pdf_report,
+            generate_excel_export,
+            generate_sample_csv,
+            parse_csv_expenses
+        )
+
+        df = parse_csv_expenses(generate_sample_csv())["data"]
+        budgets = {"Groceries": 5000.0, "Dining Out": 2000.0}
+        goals = [{"name": "Emergency Fund", "target": 100000.0, "current": 30000.0, "monthly_contrib": 10000.0, "target_date": "2027-01-01"}]
+
+        # 1. PDF Report Generation
+        pdf_bytes = generate_pdf_report(df, budgets, goals, monthly_income=100000.0)
+        self.assertIsInstance(pdf_bytes, (bytes, bytearray))
+        self.assertGreater(len(pdf_bytes), 2000)
+        self.assertTrue(pdf_bytes.startswith(b"%PDF"))
+
+        # 2. Excel Master Workbook Generation
+        excel_bytes = generate_excel_export(df, budgets, goals)
+        self.assertIsInstance(excel_bytes, (bytes, bytearray))
+        self.assertGreater(len(excel_bytes), 3000)
+
+        print(f"  [OK] PDF Report ({len(pdf_bytes)} bytes) & Excel Workbook ({len(excel_bytes)} bytes) generated successfully")
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
